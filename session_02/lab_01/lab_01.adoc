@@ -1,0 +1,233 @@
+= Lab 1 - Getting Started with Spring Boot
+
+== Bootstrap the Project
+
+. In your browser, visit http://start.spring.io.
+
+. Fill out the *Project metadata* fields as follows:
++
+Group:: `io.spring.pivotal`
+Artifact:: `hello-spring-boot`
+Name:: `hello-spring-boot`
+Description:: `Hello Spring Boot`
+Package Name:: `io.pivotal.spring.hello`
+Type:: Maven Project
+Packaging:: Jar
+Java Version:: 1.7
+Language:: Java
+Spring Boot Version 1.2.3
+
+. In the *Project dependencies* section, check the following:
++
+* Web
+
+. Click the *Generate Project* button. Your browser will download a zip file.
+Unpack that zip file at `$COURSE_HOME/session_01/lab_01/initial`.
+
+. Import the project's `pom.xml` into your editor/IDE of choice.
+
+. Add a `@RestController` annotation to the class `io.pivotal.spring.hello.HelloSpringBootApplication`.
+
+. Add the following request handler to the class `io.pivotal.spring.hello.HelloSpringBootApplication`:
++
+[source,java]
+----
+@RequestMapping("/")
+public String hello() {
+    return "Hello World!";
+}
+----
+
+== Build and Run with Embedded Apache Tomcat
+
+Spring Boot will embed Apache Tomcat by default.
+
+. Build the application:
++
+----
+$ mvn package
+----
+
+. Run the application:
++
+----
+$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
++
+You should see the application start up an embedded Apache Tomcat server on port 8080:
++
+----
+2015-05-03 13:20:51.690  INFO 2465 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2015-05-03 13:20:51.691  INFO 2465 --- [           main] i.p.s.hello.HelloSpringBootApplication   : Started HelloSpringBootApplication in 3.023 seconds (JVM running for 3.432)
+----
+
+. Visit the application in the browser (http://localhost:8080), and you should see the following:
++
+----
+Hello World!
+----
+
+== Build and Run with Embedded Eclipse Jetty
+
+Spring Boot also supports embedding a Jetty server.
+
+. Open `pom.xml` and replace the following:
++
+----
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+----
++
+with:
++
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jetty</artifactId>
+</dependency>
+----
+
+. Build the application:
++
+----
+$ mvn package
+----
+
+. Run the application:
++
+----
+$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
++
+You should see the application start up an embedded Jetty server on port 8080:
++
+----
+2015-05-03 13:26:31.370  INFO 3078 --- [           main] .s.b.c.e.j.JettyEmbeddedServletContainer : Jetty started on port(s) 8080 (http/1.1)
+2015-05-03 13:26:31.371  INFO 3078 --- [           main] i.p.s.hello.HelloSpringBootApplication   : Started HelloSpringBootApplication in 3.671 seconds (JVM running for 4.079)
+----
+
+. Visit the application in the browser (http://localhost:8080), and you should see the following:
++
+----
+Hello World!
+----
+
+== Refactor to Externalize the Config
+
+. Rename `src/main/resources/application.properties` to `src/main/resources/application.yml`. Into that file, paste the following:
++
+----
+greeting: Hello
+----
+
+. To the class `io.pivotal.spring.hello.HelloSpringBootApplication`, add a `greeting` field and inject its value:
++
+----
+@Value("${greeting}")
+String greeting;
+----
+
+. Also `io.pivotal.spring.hello.HelloSpringBootApplication`, change the return statement of `hello()` to the following:
++
+----
+return String.format("%s World!", greeting);
+----
+
+. Build the application:
++
+----
+$ mvn package
+----
+
+. Run the application:
++
+----
+$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
+
+. Visit the application in the browser (http://localhost:8080), and verify that the output is still the following:
++
+----
+Hello World!
+----
+
+. Stop the application.
+
+== Using Environment Variables for Config
+
+. Run the application again, this time setting the `GREETING` environment variable:
++
+----
+$ GREETING=Ohai java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
+
+. Visit the application in the browser (http://localhost:8080), and verify that the output has changed to the following:
++
+----
+Ohai World!
+----
+
+. Stop the application.
+
+== Using Spring Profiles for Config
+
+. Add a `spanish` profile to `application.yml`. Your finished configuration should reflect the following:
++
+----
+greeting: Hello
+
+---
+
+spring:
+  profiles: spanish
+
+greeting: Hola
+----
+
+. Build the application:
++
+----
+$ mvn package
+----
+
+. Run the application, this time setting the `SPRING_PROFILES_ACTIVE` environment variable:
++
+----
+$ SPRING_PROFILES_ACTIVE=spanish java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
+
+. Visit the application in the browser (http://localhost:8080), and verify that the output has changed to the following:
++
+----
+Hola World!
+----
+
+. Stop the application.
+
+== Resolving Conflicts
+
+. Run the application, this time setting both the `SPRING_PROFILES_ACTIVE` and `GREETING` environment variables:
++
+----
+$ SPRING_PROFILES_ACTIVE=spanish GREETING=Ohai java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+----
+
+. Visit the application in the browser (http://localhost:8080), and verify that the output has changed to the following:
++
+----
+Ohai World!
+----
+
+. Visit http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html to learn more about this outcome and the entire priority scheme for conflict resolution.

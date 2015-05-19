@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: hello-spring-boot
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: io.pivotal.spring
+Build-Jdk: 1.8.0_05
+Built-By: pivotal
+Created-By: IntelliJ IDEA
+Main-Class: io.pivotal.spring.hello.HelloSpringBootApplication
+

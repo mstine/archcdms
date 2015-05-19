@@ -1,0 +1,6 @@
+---
+applications:
+- name: cf-scale-boot
+  memory: 384M
+  instances: 1
+  host: cf-scale-boot-${random-word}
