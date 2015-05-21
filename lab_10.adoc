@@ -179,19 +179,19 @@ In this section, we'll drain logs to a very simple provider called https://paper
 
 . Login to your account and add your first system:
 +
-image::../../Common/images/papertrail_1.png[]
+image::Common/images/papertrail_1.png[]
 
 . Click on ``Alternatives'':
 +
-image::../../Common/images/papertrail_2.png[]
+image::Common/images/papertrail_2.png[]
 
 . Choose ``I use Heroku'' and provide a name:
 +
-image::../../Common/images/papertrail_3.png[]
+image::Common/images/papertrail_3.png[]
 
 . Note the URL + Port assigned to your application:
 +
-image::../../Common/images/papertrail_4.png[]
+image::Common/images/papertrail_4.png[]
 
 . We'll use a Cloud Foundry http://docs.cloudfoundry.org/devguide/services/user-provided.html[user-provided service instance] to create the log drain for our application using the URL + Port provided by Papertrail:
 +
@@ -201,7 +201,7 @@ Creating user provided service cf-scale-boot-logs in org oreilly-class / space i
 OK
 ----
 
-. We bind that service instance like those we created in link:../lab_02/lab_02.html[Lab 2]:
+. We bind that service instance like those we created in link:lab_02.html[Lab 2]:
 +
 ----
 $ cf bs cf-scale-boot cf-scale-boot-logs
@@ -218,7 +218,7 @@ $ cf restart cf-scale-boot
 
 . Refresh the Papertrail browser tab to see log events immediately flowing to the log viewing page:
 +
-image::../../Common/images/papertrail_5.png[]
+image::Common/images/papertrail_5.png[]
 
 You can see how to connect to other third-party log management systems in the http://docs.cloudfoundry.org/devguide/services/log-management-thirdparty-svc.html[Cloud Foundry documentation].
 
@@ -234,12 +234,12 @@ $ cf logs cf-scale-boot
 
 . Visit the application in the browser, and click on the ``Kill Switch'' button. This button will trigger a JVM exit with an error code (`System.exit(1)`), causing the Health Manager to observe an application instance crash:
 +
-image::../../Common/images/cf-scale-boot-kill.png[]
+image::Common/images/cf-scale-boot-kill.png[]
 
 . After clicking the kill switch a couple of interesting things should happen.
 First, you'll see an error code returned in the browser, as the request you submitted never returns a response:
 +
-image::../../Common/images/bad_gateway.png[]
+image::Common/images/bad_gateway.png[]
 +
 Also, if you're paying attention to the log tail, you'll see some interesting log messages fly by:
 +
@@ -289,7 +289,7 @@ time                          event                 actor               descript
 
 . Revisiting the *HOME PAGE* of the application (don't simply refresh the browser as you're still on the `/killSwitch` endpoint and you'll just kill the application again!) and you should see a fresh instance started:
 +
-image::../../Common/images/cf-scale-boot-healed.png[]
+image::Common/images/cf-scale-boot-healed.png[]
 
 == Clean Up
 

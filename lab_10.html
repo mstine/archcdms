@@ -943,7 +943,7 @@ To meet these needs, Cloud Foundry provides the ability to <a href="http://docs.
 <p>Login to your account and add your first system:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/papertrail_1.png" alt="papertrail 1">
+<img src="Common/images/papertrail_1.png" alt="papertrail 1">
 </div>
 </div>
 </li>
@@ -951,7 +951,7 @@ To meet these needs, Cloud Foundry provides the ability to <a href="http://docs.
 <p>Click on &#8220;Alternatives&#8221;:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/papertrail_2.png" alt="papertrail 2">
+<img src="Common/images/papertrail_2.png" alt="papertrail 2">
 </div>
 </div>
 </li>
@@ -959,7 +959,7 @@ To meet these needs, Cloud Foundry provides the ability to <a href="http://docs.
 <p>Choose &#8220;I use Heroku&#8221; and provide a name:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/papertrail_3.png" alt="papertrail 3">
+<img src="Common/images/papertrail_3.png" alt="papertrail 3">
 </div>
 </div>
 </li>
@@ -967,7 +967,7 @@ To meet these needs, Cloud Foundry provides the ability to <a href="http://docs.
 <p>Note the URL + Port assigned to your application:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/papertrail_4.png" alt="papertrail 4">
+<img src="Common/images/papertrail_4.png" alt="papertrail 4">
 </div>
 </div>
 </li>
@@ -982,7 +982,7 @@ OK</pre>
 </div>
 </li>
 <li>
-<p>We bind that service instance like those we created in <a href="../lab_02/lab_02.html">Lab 2</a>:</p>
+<p>We bind that service instance like those we created in <a href="lab_02.html">Lab 2</a>:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ cf bs cf-scale-boot cf-scale-boot-logs
@@ -1004,7 +1004,7 @@ TIP: Use 'cf restage' to ensure your env variable changes take effect</pre>
 <p>Refresh the Papertrail browser tab to see log events immediately flowing to the log viewing page:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/papertrail_5.png" alt="papertrail 5">
+<img src="Common/images/papertrail_5.png" alt="papertrail 5">
 </div>
 </div>
 </li>
@@ -1036,7 +1036,7 @@ TIP: Use 'cf restage' to ensure your env variable changes take effect</pre>
 <p>Visit the application in the browser, and click on the &#8220;Kill Switch&#8221; button. This button will trigger a JVM exit with an error code (<code>System.exit(1)</code>), causing the Health Manager to observe an application instance crash:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/cf-scale-boot-kill.png" alt="cf scale boot kill">
+<img src="Common/images/cf-scale-boot-kill.png" alt="cf scale boot kill">
 </div>
 </div>
 </li>
@@ -1045,7 +1045,7 @@ TIP: Use 'cf restage' to ensure your env variable changes take effect</pre>
 First, you&#8217;ll see an error code returned in the browser, as the request you submitted never returns a response:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/bad_gateway.png" alt="bad gateway">
+<img src="Common/images/bad_gateway.png" alt="bad gateway">
 </div>
 </div>
 <div class="paragraph">
@@ -1127,7 +1127,7 @@ time                          event                 actor               descript
 <p>Revisiting the <strong>HOME PAGE</strong> of the application (don&#8217;t simply refresh the browser as you&#8217;re still on the <code>/killSwitch</code> endpoint and you&#8217;ll just kill the application again!) and you should see a fresh instance started:</p>
 <div class="imageblock">
 <div class="content">
-<img src="../../Common/images/cf-scale-boot-healed.png" alt="cf scale boot healed">
+<img src="Common/images/cf-scale-boot-healed.png" alt="cf scale boot healed">
 </div>
 </div>
 </li>
@@ -1174,7 +1174,7 @@ OK</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-19 10:18:30 PDT
+Last updated 2015-05-21 12:56:06 PDT
 </div>
 </div>
 </body>

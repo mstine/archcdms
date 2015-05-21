@@ -2,7 +2,7 @@
 
 == Set up the Actuator
 
-. Continue with the project you completed in link:../lab_01/lab_01.html[Lab 1].
+. Continue with the project you completed in link:lab_01.html[Lab 1].
 
 . To `pom.xml` add the following dependency to include the starter for Spring Boot Actuator:
 +
