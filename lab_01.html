@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Architecting for Continuous Delivery with Microservices</title>
+<title>Lab 1 - Getting Started with Spring Boot</title>
 <style>
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
@@ -682,137 +682,390 @@ b.conum * { color: inherit !important; }
 </head>
 <body class="article">
 <div id="header">
-<h1>Architecting for Continuous Delivery with Microservices</h1>
+<h1>Lab 1 - Getting Started with Spring Boot</h1>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>Student Guide</p>
-</div>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_instructor_details">Instructor Details</h2>
+<h2 id="_bootstrap_the_project">Bootstrap the Project</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Matt Stine (<a href="https://twitter.com/mstine">@mstine</a>)<br>
-Principal Engineer / Senior Project Manager - Pivotal<br>
-<a href="mailto:mstine@pivotal.io">mstine@pivotal.io</a></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_schedule">Schedule</h2>
-<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In your browser, visit <a href="http://start.spring.io" class="bare">http://start.spring.io</a>.</p>
+</li>
+<li>
+<p>Fill out the <strong>Project metadata</strong> fields as follows:</p>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">7:30 AM - 8:30 AM</dt>
+<dt class="hdlist1">Group</dt>
 <dd>
-<p>Breakfast</p>
+<p><code>io.spring.pivotal</code></p>
 </dd>
-<dt class="hdlist1">8:30 AM - 10:00 AM</dt>
+<dt class="hdlist1">Artifact</dt>
 <dd>
-<p><strong>Session 1</strong>: <em>Continuous Delivery with Microservices Overview</em></p>
+<p><code>hello-spring-boot</code></p>
 </dd>
-<dt class="hdlist1">10:00 AM - 10:15 AM</dt>
+<dt class="hdlist1">Name</dt>
 <dd>
-<p>Morning Brain Break</p>
+<p><code>hello-spring-boot</code></p>
 </dd>
-<dt class="hdlist1">10:15 AM - 12:00 PM</dt>
+<dt class="hdlist1">Description</dt>
 <dd>
-<p><strong>Session 2</strong>: <em>Building and Composing Microservices</em></p>
+<p><code>Hello Spring Boot</code></p>
 </dd>
-<dt class="hdlist1">12:00 PM - 1:15 PM</dt>
+<dt class="hdlist1">Package Name</dt>
 <dd>
-<p>Lunch</p>
+<p><code>io.pivotal.spring.hello</code></p>
 </dd>
-<dt class="hdlist1">1:15 PM - 3:00 PM</dt>
+<dt class="hdlist1">Type</dt>
 <dd>
-<p><strong>Session 3</strong>: <em>Testing and Delivering Microservices</em></p>
+<p>Maven Project</p>
 </dd>
-<dt class="hdlist1">3:00 PM - 3:15 PM</dt>
+<dt class="hdlist1">Packaging</dt>
 <dd>
-<p>Afternoon Brain Break</p>
+<p>Jar</p>
 </dd>
-<dt class="hdlist1">3:15 PM - 5:00 PM</dt>
+<dt class="hdlist1">Java Version</dt>
 <dd>
-<p><strong>Session 4</strong>: <em>Deploying and Running Microservices</em></p>
+<p>1.7</p>
+</dd>
+<dt class="hdlist1">Language</dt>
+<dd>
+<p>Java
+Spring Boot Version 1.2.3</p>
 </dd>
 </dl>
 </div>
+</li>
+<li>
+<p>In the <strong>Project dependencies</strong> section, check the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Web</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click the <strong>Generate Project</strong> button. Your browser will download a zip file.
+Unpack that zip file at <code>$COURSE_HOME/session_01/lab_01/initial</code>.</p>
+</li>
+<li>
+<p>Import the project&#8217;s <code>pom.xml</code> into your editor/IDE of choice.</p>
+</li>
+<li>
+<p>Add a <code>@RestController</code> annotation to the class <code>io.pivotal.spring.hello.HelloSpringBootApplication</code>.</p>
+</li>
+<li>
+<p>Add the following request handler to the class <code>io.pivotal.spring.hello.HelloSpringBootApplication</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RequestMapping("/")
+public String hello() {
+    return "Hello World!";
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_course_materials">Course Materials</h2>
+<h2 id="_build_and_run_with_embedded_apache_tomcat">Build and Run with Embedded Apache Tomcat</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p>Spring Boot will embed Apache Tomcat by default.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>Session 1 (<a href="session_01.pdf">Slides</a>)</p>
-</li>
-<li>
-<p>Session 2 (<a href="session_02.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_01.html">Lab 1 - Getting Started with Spring Boot</a></p>
-</li>
-<li>
-<p><a href="lab_02.html">Lab 2 - Introspection, Monitoring, and Metrics using Spring Boot Actuator</a></p>
-</li>
-<li>
-<p><a href="lab_03.html">Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS</a></p>
-</li>
-</ul>
+<p>Build the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn package</pre>
+</div>
 </div>
 </li>
 <li>
-<p>Session 3 (<a href="session_03/session_03.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_04.html">Lab 4 - Creating a Contract Test with Pact JVM</a></p>
-</li>
-<li>
-<p><a href="lab_05.html">Lab 5 - Verifying a Contract with Pact JVM</a></p>
-</li>
-<li>
-<p><a href="lab_06.html">Lab 6 - Publishing a Contract to Pact Broker</a></p>
-</li>
-</ul>
+<p>Run the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the application start up an embedded Apache Tomcat server on port 8080:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>2015-05-03 13:20:51.690  INFO 2465 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2015-05-03 13:20:51.691  INFO 2465 --- [           main] i.p.s.hello.HelloSpringBootApplication   : Started HelloSpringBootApplication in 3.023 seconds (JVM running for 3.432)</pre>
+</div>
 </div>
 </li>
 <li>
-<p>Session 4 (<a href="session_04/session_04.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_07.html">Lab 7 - From Zero to Pushing Your First Application</a></p>
-</li>
-<li>
-<p><a href="lab_08.html">Lab 8 - Binding to Cloud Foundry Services</a></p>
-</li>
-<li>
-<p><a href="lab_09.html">Lab 9 - Scaling Applications</a></p>
-</li>
-<li>
-<p><a href="lab_10.html">Lab 10 - Monitoring Applications</a></p>
-</li>
-<li>
-<p><a href="lab_11.html">Lab 11 - Push Microservices to Cloud Foundry</a></p>
-</li>
-</ul>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and you should see the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Hello World!</pre>
+</div>
 </div>
 </li>
-</ul>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_and_run_with_embedded_eclipse_jetty">Build and Run with Embedded Eclipse Jetty</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Boot also supports embedding a Jetty server.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open <code>pom.xml</code> and replace the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+	&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-jetty&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn package</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the application start up an embedded Jetty server on port 8080:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>2015-05-03 13:26:31.370  INFO 3078 --- [           main] .s.b.c.e.j.JettyEmbeddedServletContainer : Jetty started on port(s) 8080 (http/1.1)
+2015-05-03 13:26:31.371  INFO 3078 --- [           main] i.p.s.hello.HelloSpringBootApplication   : Started HelloSpringBootApplication in 3.671 seconds (JVM running for 4.079)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and you should see the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Hello World!</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_refactor_to_externalize_the_config">Refactor to Externalize the Config</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Rename <code>src/main/resources/application.properties</code> to <code>src/main/resources/application.yml</code>. Into that file, paste the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>greeting: Hello</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To the class <code>io.pivotal.spring.hello.HelloSpringBootApplication</code>, add a <code>greeting</code> field and inject its value:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@Value("${greeting}")
+String greeting;</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Also <code>io.pivotal.spring.hello.HelloSpringBootApplication</code>, change the return statement of <code>hello()</code> to the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>return String.format("%s World!", greeting);</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn package</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and verify that the output is still the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Hello World!</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the application.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_environment_variables_for_config">Using Environment Variables for Config</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run the application again, this time setting the <code>GREETING</code> environment variable:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ GREETING=Ohai java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and verify that the output has changed to the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Ohai World!</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the application.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_spring_profiles_for_config">Using Spring Profiles for Config</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add a <code>spanish</code> profile to <code>application.yml</code>. Your finished configuration should reflect the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>greeting: Hello
+
+---
+
+spring:
+  profiles: spanish
+
+greeting: Hola</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn package</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the application, this time setting the <code>SPRING_PROFILES_ACTIVE</code> environment variable:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ SPRING_PROFILES_ACTIVE=spanish java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and verify that the output has changed to the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Hola World!</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the application.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resolving_conflicts">Resolving Conflicts</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run the application, this time setting both the <code>SPRING_PROFILES_ACTIVE</code> and <code>GREETING</code> environment variables:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ SPRING_PROFILES_ACTIVE=spanish GREETING=Ohai java -jar target/hello-spring-boot-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit the application in the browser (<a href="http://localhost:8080" class="bare">http://localhost:8080</a>), and verify that the output has changed to the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Ohai World!</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit <a href="http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html" class="bare">http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html</a> to learn more about this outcome and the entire priority scheme for conflict resolution.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 12:48:56 PDT
+Last updated 2015-05-19 10:28:30 PDT
 </div>
 </div>
 </body>

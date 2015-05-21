@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Architecting for Continuous Delivery with Microservices</title>
+<title>Lab 10 - Monitoring Applications</title>
 <style>
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
@@ -682,137 +682,499 @@ b.conum * { color: inherit !important; }
 </head>
 <body class="article">
 <div id="header">
-<h1>Architecting for Continuous Delivery with Microservices</h1>
+<h1>Lab 10 - Monitoring Applications</h1>
 </div>
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Student Guide</p>
+<p>Cloud Foundry provides several built-in mechanisms that allow us to monitor our applications' state changes and behavior.
+Additionally, Cloud Foundry actively monitors the health of our application processes and will restart them should they crash.
+In this lab, we&#8217;ll explore a few of these mechanisms.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_instructor_details">Instructor Details</h2>
+<h2 id="_events">Events</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Matt Stine (<a href="https://twitter.com/mstine">@mstine</a>)<br>
-Principal Engineer / Senior Project Manager - Pivotal<br>
-<a href="mailto:mstine@pivotal.io">mstine@pivotal.io</a></p>
+<p>Cloud Foundry only allows application configuration to be modified via its API.
+This gives application operators confidence that all changes to application configuration are known and auditable.
+It also reduces the number of causes that must be considered when problems arise.</p>
+</div>
+<div class="paragraph">
+<p>All application configuration changes are recorded as <em>events</em>.
+These events can be viewed via the Cloud Foundry API, and viewing is facilitated via the CLI.</p>
+</div>
+<div class="paragraph">
+<p>Take a look at the events that have transpired so far for our deployment of <code>cf-scale-boot</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ cf events cf-scale-boot
+Getting events for app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+
+time                          event                 actor               description
+2015-02-13T15:18:33.00-0600   audit.app.update      mstine@pivotal.io   instances: 1 <b class="conum">(6)</b>
+2015-02-13T15:04:34.00-0600   audit.app.update      mstine@pivotal.io   instances: 5 <b class="conum">(5)</b>
+2015-02-13T12:56:35.00-0600   audit.app.update      mstine@pivotal.io   state: STARTED <b class="conum">(4)</b>
+2015-02-13T12:56:26.00-0600   audit.app.update      mstine@pivotal.io <b class="conum">(3)</b>
+2015-02-13T12:56:26.00-0600   audit.app.map-route   mstine@pivotal.io <b class="conum">(2)</b>
+2015-02-13T12:56:24.00-0600   audit.app.create      mstine@pivotal.io   instances: 1, memory: 512, state: STOPPED, environment_json: PRIVATE DATA HIDDEN <b class="conum">(1)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Events are sorted newest to oldest, so we&#8217;ll start from the bottom.
+Here we see the <code>app.create</code> event, which created our application&#8217;s record and stored all of its metadata (e.g. <code>memory: 512</code>).</p>
+</li>
+<li>
+<p>The <code>app.map-route</code> event records the incoming request to assign a route to our application.</p>
+</li>
+<li>
+<p>This <code>app.update</code> event records the resulting change to our applications metadata.</p>
+</li>
+<li>
+<p>This <code>app.update</code> event records the change of our application&#8217;s state to <code>STARTED</code>.</p>
+</li>
+<li>
+<p>Remember scaling the application up? This <code>app.update</code> event records the metadata change <code>instances: 5</code>.</p>
+</li>
+<li>
+<p>And here&#8217;s the <code>app.update</code> event recording our scaling of the application back down with <code>instances: 1</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Let&#8217;s explicitly ask for the application to be stopped:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf stop cf-scale-boot
+Stopping app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+OK</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now, examine the additional <code>app.update</code> event:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf events cf-scale-boot
+Getting events for app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+
+time                          event                 actor               description
+2015-02-13T15:59:10.00-0600   audit.app.update      mstine@pivotal.io   state: STOPPED
+2015-02-13T15:18:33.00-0600   audit.app.update      mstine@pivotal.io   instances: 1
+2015-02-13T15:04:34.00-0600   audit.app.update      mstine@pivotal.io   instances: 5
+2015-02-13T12:56:35.00-0600   audit.app.update      mstine@pivotal.io   state: STARTED
+2015-02-13T12:56:26.00-0600   audit.app.update      mstine@pivotal.io
+2015-02-13T12:56:26.00-0600   audit.app.map-route   mstine@pivotal.io
+2015-02-13T12:56:24.00-0600   audit.app.create      mstine@pivotal.io   instances: 1, memory: 512, state: STOPPED, environment_json: PRIVATE DATA HIDDEN</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the application again:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf start cf-scale-boot
+Starting app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+
+0 of 1 instances running, 1 starting
+0 of 1 instances running, 1 starting
+0 of 1 instances running, 1 starting
+1 of 1 instances running
+
+
+App started
+
+
+OK
+
+App cf-scale-boot was started using this command `JAVA_HOME=$PWD/.java-buildpack/open_jdk_jre JAVA_OPTS="-Djava.io.tmpdir=$TMPDIR -XX:OnOutOfMemoryError=$PWD/.java-buildpack/open_jdk_jre/bin/killjava.sh -Xmx382293K -Xms382293K -XX:MaxMetaspaceSize=64M -XX:MetaspaceSize=64M -Xss995K" SERVER_PORT=$PORT $PWD/.java-buildpack/spring_boot_cli/bin/spring run app.groovy`
+
+Showing health and status for app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+OK
+
+requested state: started
+instances: 1/1
+usage: 512M x 1 instances
+urls: cf-scale-boot-stockinged-rust.cfapps.io
+last uploaded: Fri Feb 13 18:56:29 UTC 2015
+
+     state     since                    cpu    memory           disk
+#0   running   2015-02-13 04:01:50 PM   0.0%   389.1M of 512M   128.9M of 1G</pre>
+</div>
+</div>
+</li>
+<li>
+<p>And again, view the additional <code>app.update</code> event:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf events cf-scale-boot
+Getting events for app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+
+time                          event                 actor               description
+2015-02-13T16:01:28.00-0600   audit.app.update      mstine@pivotal.io   state: STARTED
+2015-02-13T15:59:10.00-0600   audit.app.update      mstine@pivotal.io   state: STOPPED
+2015-02-13T15:18:33.00-0600   audit.app.update      mstine@pivotal.io   instances: 1
+2015-02-13T15:04:34.00-0600   audit.app.update      mstine@pivotal.io   instances: 5
+2015-02-13T12:56:35.00-0600   audit.app.update      mstine@pivotal.io   state: STARTED
+2015-02-13T12:56:26.00-0600   audit.app.update      mstine@pivotal.io
+2015-02-13T12:56:26.00-0600   audit.app.map-route   mstine@pivotal.io
+2015-02-13T12:56:24.00-0600   audit.app.create      mstine@pivotal.io   instances: 1, memory: 512, state: STOPPED, environment_json: PRIVATE DATA HIDDEN</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_schedule">Schedule</h2>
+<h2 id="_logs">Logs</h2>
 <div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">7:30 AM - 8:30 AM</dt>
-<dd>
-<p>Breakfast</p>
-</dd>
-<dt class="hdlist1">8:30 AM - 10:00 AM</dt>
-<dd>
-<p><strong>Session 1</strong>: <em>Continuous Delivery with Microservices Overview</em></p>
-</dd>
-<dt class="hdlist1">10:00 AM - 10:15 AM</dt>
-<dd>
-<p>Morning Brain Break</p>
-</dd>
-<dt class="hdlist1">10:15 AM - 12:00 PM</dt>
-<dd>
-<p><strong>Session 2</strong>: <em>Building and Composing Microservices</em></p>
-</dd>
-<dt class="hdlist1">12:00 PM - 1:15 PM</dt>
-<dd>
-<p>Lunch</p>
-</dd>
-<dt class="hdlist1">1:15 PM - 3:00 PM</dt>
-<dd>
-<p><strong>Session 3</strong>: <em>Testing and Delivering Microservices</em></p>
-</dd>
-<dt class="hdlist1">3:00 PM - 3:15 PM</dt>
-<dd>
-<p>Afternoon Brain Break</p>
-</dd>
-<dt class="hdlist1">3:15 PM - 5:00 PM</dt>
-<dd>
-<p><strong>Session 4</strong>: <em>Deploying and Running Microservices</em></p>
-</dd>
-</dl>
+<div class="paragraph">
+<p>One of the most important enablers of visibility into application behavior is logging.
+Effective management of logs has historically been very difficult.
+Cloud Foundry&#8217;s <a href="https://github.com/cloudfoundry/loggregator">log aggregation</a> components simplify log management by assuming responsibility for it.
+Application developers need only log all messages to either <code>STDOUT</code> or <code>STDERR</code>, and the platform will capture these messages.</p>
+</div>
+<div class="sect2">
+<h3 id="_for_developers">For Developers</h3>
+<div class="paragraph">
+<p>Application developers can view application logs using the CF CLI.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Let&#8217;s view recent log messages for <code>cf-scale-boot</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf logs cf-scale-boot --recent</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here are two interesting subsets of one output from that command:</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. CF Component Logs</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>2015-02-13T14:45:39.40-0600 [RTR/0]      OUT cf-scale-boot-stockinged-rust.cfapps.io - [13/02/2015:20:45:39 +0000] "GET /css/bootstrap.min.css HTTP/1.1" 304 0 "http://cf-scale-boot-stockinged-rust.cfapps.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36" 10.10.66.88:50372 x_forwarded_for:"50.157.39.197" vcap_request_id:84cc1b7a-bb30-4355-7512-5adaf36ff767 response_time:0.013115764 app_id:7a428901-1691-4cce-b7f6-62d186c5cb55 <b class="conum">(1)</b>
+2015-02-13T14:45:39.40-0600 [RTR/1]      OUT cf-scale-boot-stockinged-rust.cfapps.io - [13/02/2015:20:45:39 +0000] "GET /img/LOGO_CloudFoundry_Large.png HTTP/1.1" 304 0 "http://cf-scale-boot-stockinged-rust.cfapps.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36" 10.10.66.88:24323 x_forwarded_for:"50.157.39.197" vcap_request_id:b3e2466b-6a41-4c6d-5b3d-0f70702c0ec1 response_time:0.010003444 app_id:7a428901-1691-4cce-b7f6-62d186c5cb55
+2015-02-13T15:04:33.09-0600 [API/1]      OUT Tried to stop app that never received a start event <b class="conum">(2)</b>
+2015-02-13T15:04:33.51-0600 [DEA/12]     OUT Starting app instance (index 2) with guid 7a428901-1691-4cce-b7f6-62d186c5cb55 <b class="conum">(3)</b>
+2015-02-13T15:04:33.71-0600 [DEA/4]      OUT Starting app instance (index 3) with guid 7a428901-1691-4cce-b7f6-62d186c5cb55</pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>An &#8220;Apache-style&#8221; access log event from the (Go)Router</p>
+</li>
+<li>
+<p>An API log event that corresponds to an event as shown in <code>cf events</code></p>
+</li>
+<li>
+<p>A DEA log event indicating the start of an application instance on that DEA.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. Application Logs</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>2015-02-13T16:01:50.28-0600 [App/0]      OUT 2015-02-13 22:01:50.282  INFO 36 --- [       runner-0] o.s.b.a.e.jmx.EndpointMBeanExporter      : Located managed bean 'autoConfigurationAuditEndpoint': registering with JMX server as MBean [org.springframework.boot:type=Endpoint,name=autoConfigurationAuditEndpoint]
+2015-02-13T16:01:50.28-0600 [App/0]      OUT 2015-02-13 22:01:50.287  INFO 36 --- [       runner-0] o.s.b.a.e.jmx.EndpointMBeanExporter      : Located managed bean 'shutdownEndpoint': registering with JMX server as MBean [org.springframework.boot:type=Endpoint,name=shutdownEndpoint]
+2015-02-13T16:01:50.29-0600 [App/0]      OUT 2015-02-13 22:01:50.299  INFO 36 --- [       runner-0] o.s.b.a.e.jmx.EndpointMBeanExporter      : Located managed bean 'configurationPropertiesReportEndpoint': registering with JMX server as MBean [org.springframework.boot:type=Endpoint,name=configurationPropertiesReportEndpoint]
+2015-02-13T16:01:50.36-0600 [App/0]      OUT 2015-02-13 22:01:50.359  INFO 36 --- [       runner-0] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 61316/http
+2015-02-13T16:01:50.36-0600 [App/0]      OUT Started...
+2015-02-13T16:01:50.36-0600 [App/0]      OUT 2015-02-13 22:01:50.364  INFO 36 --- [       runner-0] o.s.boot.SpringApplication               : Started application in 6.906 seconds (JVM running for 15.65)</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, Cloud Foundry&#8217;s log aggregation components capture both application logs and CF component logs relevant to your application.
+These events are properly interleaved based on time, giving you an accurate picture of events as they transpired across the system.</p>
+</div>
+</li>
+<li>
+<p>To get a running &#8220;tail&#8221; of the application logs rather than a dump, simply type:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf logs cf-scale-boot</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can try various things like refreshing the browser and triggering stop/start events to see logs being generated.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_for_operators_optional">For Operators (OPTIONAL)</h3>
+<div class="paragraph">
+<p>Application operators will also enjoy commands like <code>cf logs</code>, but are often interested in long-term retention, indexing, and analysis of logs as well.
+Cloud Foundry currently only provides short-term retention of logs.
+To meet these needs, Cloud Foundry provides the ability to <a href="http://docs.cloudfoundry.org/devguide/services/log-management.html">drain logs to third-party providers.</a></p>
+</div>
+<div class="paragraph">
+<p>In this section, we&#8217;ll drain logs to a very simple provider called <a href="https://papertrailapp.com">Papertrail</a>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Visit <a href="https://papertrailapp.com" class="bare">https://papertrailapp.com</a> and create a free account.</p>
+</li>
+<li>
+<p>Login to your account and add your first system:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/papertrail_1.png" alt="papertrail 1">
+</div>
+</div>
+</li>
+<li>
+<p>Click on &#8220;Alternatives&#8221;:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/papertrail_2.png" alt="papertrail 2">
+</div>
+</div>
+</li>
+<li>
+<p>Choose &#8220;I use Heroku&#8221; and provide a name:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/papertrail_3.png" alt="papertrail 3">
+</div>
+</div>
+</li>
+<li>
+<p>Note the URL + Port assigned to your application:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/papertrail_4.png" alt="papertrail 4">
+</div>
+</div>
+</li>
+<li>
+<p>We&#8217;ll use a Cloud Foundry <a href="http://docs.cloudfoundry.org/devguide/services/user-provided.html">user-provided service instance</a> to create the log drain for our application using the URL + Port provided by Papertrail:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf cups cf-scale-boot-logs -l syslog://logs2.papertrailapp.com:43882
+Creating user provided service cf-scale-boot-logs in org oreilly-class / space instructor as mstine@pivotal.io...
+OK</pre>
+</div>
+</div>
+</li>
+<li>
+<p>We bind that service instance like those we created in <a href="../lab_02/lab_02.html">Lab 2</a>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf bs cf-scale-boot cf-scale-boot-logs
+Binding service cf-scale-boot-logs to app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+OK
+TIP: Use 'cf restage' to ensure your env variable changes take effect</pre>
+</div>
+</div>
+</li>
+<li>
+<p>We&#8217;ll use a <code>cf restart</code> rather than <code>cf restage</code> to make the binding take effect:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf restart cf-scale-boot</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Refresh the Papertrail browser tab to see log events immediately flowing to the log viewing page:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/papertrail_5.png" alt="papertrail 5">
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You can see how to connect to other third-party log management systems in the <a href="http://docs.cloudfoundry.org/devguide/services/log-management-thirdparty-svc.html">Cloud Foundry documentation</a>.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_course_materials">Course Materials</h2>
+<h2 id="_health">Health</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p>Cloud Foundry&#8217;s <a href="http://docs.cloudfoundry.org/concepts/architecture/#hm9k">Heatlh Manager</a> actively monitors the health of our application processes and will restart them should they crash.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>Session 1 (<a href="session_01.pdf">Slides</a>)</p>
-</li>
-<li>
-<p>Session 2 (<a href="session_02.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_01.html">Lab 1 - Getting Started with Spring Boot</a></p>
-</li>
-<li>
-<p><a href="lab_02.html">Lab 2 - Introspection, Monitoring, and Metrics using Spring Boot Actuator</a></p>
-</li>
-<li>
-<p><a href="lab_03.html">Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS</a></p>
-</li>
-</ul>
+<p>If you don&#8217;t have one already running, start a log tail for <code>cf-scale-boot</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf logs cf-scale-boot</pre>
+</div>
 </div>
 </li>
 <li>
-<p>Session 3 (<a href="session_03/session_03.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_04.html">Lab 4 - Creating a Contract Test with Pact JVM</a></p>
-</li>
-<li>
-<p><a href="lab_05.html">Lab 5 - Verifying a Contract with Pact JVM</a></p>
-</li>
-<li>
-<p><a href="lab_06.html">Lab 6 - Publishing a Contract to Pact Broker</a></p>
-</li>
-</ul>
+<p>Visit the application in the browser, and click on the &#8220;Kill Switch&#8221; button. This button will trigger a JVM exit with an error code (<code>System.exit(1)</code>), causing the Health Manager to observe an application instance crash:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/cf-scale-boot-kill.png" alt="cf scale boot kill">
+</div>
 </div>
 </li>
 <li>
-<p>Session 4 (<a href="session_04/session_04.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
+<p>After clicking the kill switch a couple of interesting things should happen.
+First, you&#8217;ll see an error code returned in the browser, as the request you submitted never returns a response:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/bad_gateway.png" alt="bad gateway">
+</div>
+</div>
+<div class="paragraph">
+<p>Also, if you&#8217;re paying attention to the log tail, you&#8217;ll see some interesting log messages fly by:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>2015-02-13T17:17:54.86-0600 [App/0]      OUT 2015-02-13 23:17:54.860 ERROR 36 --- [io-61617-exec-5] WebApplication                           : KILL SWITCH ACTIVATED! <b class="conum">(1)</b>
+2015-02-13T17:17:54.86-0600 [App/0]      OUT 2015-02-13 23:17:54.869  INFO 36 --- [       Thread-2] ationConfigEmbeddedWebApplicationContext : Closing org.springframework.boot.c$ntext.embedded.AnnotationConfigEmbeddedWebApplicationContext@6a62811d: startup date [Fri Feb 13 22:57:05 UTC 2015]; root of context hierarchy
+2015-02-13T17:17:54.87-0600 [App/0]      OUT 2015-02-13 23:17:54.870  INFO 36 --- [       Thread-2] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 0
+2015-02-13T17:17:54.87-0600 [App/0]      OUT 2015-02-13 23:17:54.874  INFO 36 --- [       Thread-2] o.s.b.a.e.jmx.EndpointMBeanExporter      : Unregistering JMX-exposed beans on shutdown
+2015-02-13T17:17:54.87-0600 [App/0]      OUT 2015-02-13 23:17:54.878  INFO 36 --- [       Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2015-02-13T17:17:57.30-0600 [RTR/1]      OUT cf-scale-boot-stockinged-rust.cfapps.io - [13/02/2015:23:17:54 +0000] "GET /killSwitch HTTP/1.1" 502 0 "http://cf-scale-boot-stockinged-rust.cfapps.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36" 10.10.2.122:25194 x_forwarded_for:"50.157.39.197" vcap_request_id:fc2b93a9-451d-460f-726e-14ada0069ff4 response_time:2.465784807 app_id:7a428901-1691-4cce-b7f6-62d186c5cb55 <b class="conum">(2)</b>
+2015-02-13T17:17:57.31-0600 [App/0]      ERR
+2015-02-13T17:17:57.38-0600 [API/2]      OUT App instance exited with guid 7a428901-1691-4cce-b7f6-62d186c5cb55 payload: {"cc_partition"=&gt;"default", "droplet"=&gt;"7a428901-1691-4cce-b7f6-62d186c5cb55", "version"=&gt;"ebcdb262-2851-4716-83a4-c816fa2c68bb", "instance"=&gt;"1eecfb8d3b41492a8e36237b365a4755", "index"=&gt;0, "reason"=&gt;"CRASHED", "exit_status"=&gt;1, "exit_description"=&gt;"app instance exited", "crash_timestamp"=&gt;1423869477} <b class="conum">(3)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
 <li>
-<p><a href="lab_07.html">Lab 7 - From Zero to Pushing Your First Application</a></p>
+<p>Just before issuing the <code>System.exit(1)</code> call, the application logs that the kill switch was clicked.</p>
 </li>
 <li>
-<p><a href="lab_08.html">Lab 8 - Binding to Cloud Foundry Services</a></p>
+<p>The (Go)Router logs the 502 error.</p>
 </li>
 <li>
-<p><a href="lab_09.html">Lab 9 - Scaling Applications</a></p>
+<p>The API logs that an application instance exited due to a crash.</p>
 </li>
-<li>
-<p><a href="lab_10.html">Lab 10 - Monitoring Applications</a></p>
-</li>
-<li>
-<p><a href="lab_11.html">Lab 11 - Push Microservices to Cloud Foundry</a></p>
-</li>
-</ul>
+</ol>
+</div>
+</div>
 </div>
 </li>
-</ul>
+<li>
+<p>Check the application events to see another indicator of the crash:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf events cf-scale-boot
+Getting events for app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+
+time                          event                 actor               description
+2015-02-13T17:17:57.00-0600   app.crash             cf-scale-boot       index: 0, reason: CRASHED, exit_description: app instance exited, exit_status: 1</pre>
+</div>
+</div>
+</li>
+<li>
+<p>By this time you should have noticed some additional interesting events in the logs:</p>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>2015-02-13T17:18:14.67-0600 [DEA/19]     OUT Starting app instance (index 0) with guid 7a428901-1691-4cce-b7f6-62d186c5cb55 <b class="conum">(1)</b>
+2015-02-13T17:18:24.72-0600 [App/0]      OUT Resolving dependencies.... <b class="conum">(2)</b>
+2015-02-13T17:18:26.62-0600 [App/0]      OUT   .   ____          _            __ _ _
+2015-02-13T17:18:26.62-0600 [App/0]      OUT  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+2015-02-13T17:18:26.62-0600 [App/0]      OUT ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+2015-02-13T17:18:26.62-0600 [App/0]      OUT  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+2015-02-13T17:18:26.62-0600 [App/0]      OUT   '  |____| .__|_| |_|_| |_\__, | / / / /
+2015-02-13T17:18:26.62-0600 [App/0]      OUT  =========|_|==============|___/=/_/_/_/
+2015-02-13T17:18:26.62-0600 [App/0]      OUT  :: Spring Boot ::        (v1.1.9.RELEASE)</pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>The DEA indicates that it is starting another instance of the application as a result of the Health Manager observing a difference between the desired and actual state (i.e. running instances = 1 vs. running instances = 0).</p>
+</li>
+<li>
+<p>The new application instance starts logging events as it starts up.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Revisiting the <strong>HOME PAGE</strong> of the application (don&#8217;t simply refresh the browser as you&#8217;re still on the <code>/killSwitch</code> endpoint and you&#8217;ll just kill the application again!) and you should see a fresh instance started:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/cf-scale-boot-healed.png" alt="cf scale boot healed">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_clean_up">Clean Up</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Because of the limited PWS quota we have for this course, let&#8217;s clean up our application and services to make room for future labs.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Delete the <code>cf-scale-boot</code> application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf d cf-scale-boot
+
+Really delete the app cf-scale-boot?&gt; y
+Deleting app cf-scale-boot in org oreilly-class / space instructor as mstine@pivotal.io...
+'OK</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Delete the <code>cf-scale-boot-logs</code> service:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf ds cf-scale-boot-logs
+
+Really delete the service cf-scale-boot-logs?&gt; y
+Deleting service cf-scale-boot-logs in org oreilly-class / space instructor as mstine@pivotal.io...
+OK</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 12:48:56 PDT
+Last updated 2015-05-19 10:18:30 PDT
 </div>
 </div>
 </body>

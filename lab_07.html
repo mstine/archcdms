@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Architecting for Continuous Delivery with Microservices</title>
+<title>Lab 7 - From Zero to Pushing Your First Application</title>
 <style>
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
@@ -682,137 +682,198 @@ b.conum * { color: inherit !important; }
 </head>
 <body class="article">
 <div id="header">
-<h1>Architecting for Continuous Delivery with Microservices</h1>
+<h1>Lab 7 - From Zero to Pushing Your First Application</h1>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_target">Target</h2>
 <div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you haven&#8217;t already, download the latest release of the Cloud Foundry CLI from <a href="https://github.com/cloudfoundry/cli/releases" class="bare">https://github.com/cloudfoundry/cli/releases</a> for your operating system and install it.</p>
+</li>
+<li>
+<p>Set the API target for the CLI:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf api api.run.pivotal.io</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Login to Pivotal Web Services:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf login</pre>
+</div>
+</div>
 <div class="paragraph">
-<p>Student Guide</p>
+<p>Follow the prompts.</p>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_instructor_details">Instructor Details</h2>
+<h2 id="_build_and_push">Build and Push!</h2>
 <div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Change to the <em>Spring Music</em> sample application directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd $COURSE_HOME/lab_07/spring-music</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Using the Gradle Wrapper, build and package the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ ./gradlew assemble</pre>
+</div>
+</div>
 <div class="paragraph">
-<p>Matt Stine (<a href="https://twitter.com/mstine">@mstine</a>)<br>
-Principal Engineer / Senior Project Manager - Pivotal<br>
-<a href="mailto:mstine@pivotal.io">mstine@pivotal.io</a></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_schedule">Schedule</h2>
-<div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">7:30 AM - 8:30 AM</dt>
-<dd>
-<p>Breakfast</p>
-</dd>
-<dt class="hdlist1">8:30 AM - 10:00 AM</dt>
-<dd>
-<p><strong>Session 1</strong>: <em>Continuous Delivery with Microservices Overview</em></p>
-</dd>
-<dt class="hdlist1">10:00 AM - 10:15 AM</dt>
-<dd>
-<p>Morning Brain Break</p>
-</dd>
-<dt class="hdlist1">10:15 AM - 12:00 PM</dt>
-<dd>
-<p><strong>Session 2</strong>: <em>Building and Composing Microservices</em></p>
-</dd>
-<dt class="hdlist1">12:00 PM - 1:15 PM</dt>
-<dd>
-<p>Lunch</p>
-</dd>
-<dt class="hdlist1">1:15 PM - 3:00 PM</dt>
-<dd>
-<p><strong>Session 3</strong>: <em>Testing and Delivering Microservices</em></p>
-</dd>
-<dt class="hdlist1">3:00 PM - 3:15 PM</dt>
-<dd>
-<p>Afternoon Brain Break</p>
-</dd>
-<dt class="hdlist1">3:15 PM - 5:00 PM</dt>
-<dd>
-<p><strong>Session 4</strong>: <em>Deploying and Running Microservices</em></p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_course_materials">Course Materials</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Session 1 (<a href="session_01.pdf">Slides</a>)</p>
-</li>
-<li>
-<p>Session 2 (<a href="session_02.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_01.html">Lab 1 - Getting Started with Spring Boot</a></p>
-</li>
-<li>
-<p><a href="lab_02.html">Lab 2 - Introspection, Monitoring, and Metrics using Spring Boot Actuator</a></p>
-</li>
-<li>
-<p><a href="lab_03.html">Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS</a></p>
-</li>
-</ul>
+<p>The Gradle Wrapper will automatically download the appropriate version of Gradle for this project along with all of <em>Spring Music</em>'s dependencies. This may take a few moments.</p>
 </div>
 </li>
 <li>
-<p>Session 3 (<a href="session_03/session_03.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
+<p>Push the application!</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf push</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the following listing. Take a look at the listing callouts for a play-by-play of what&#8217;s happening:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>Using manifest file /Users/pivotal/mstine/2015/OReilly/CloudNativeArchitectureClass/day_01/session_02/lab_05/spring-music/manifest.yml <b class="conum">(1)</b>
+
+Creating app spring-music in org oreilly-class / space instructor as mstine@pivotal.io...
+OK <b class="conum">(2)</b>
+
+Creating route spring-music-hippest-shaman.cfapps.io...
+OK <b class="conum">(3)</b>
+
+Binding spring-music-hippest-shaman.cfapps.io to spring-music...
+OK <b class="conum">(4)</b>
+
+Uploading spring-music... <b class="conum">(5)</b>
+Uploading app files from: /Users/pivotal/mstine/2015/OReilly/CloudNativeArchitectureClass/day_01/session_02/lab_05/spring-music/build/libs/spring-music.war
+Uploading 569.7K, 90 files
+Done uploading
+OK
+
+Starting app spring-music in org oreilly-class / space instructor as mstine@pivotal.io... <b class="conum">(6)</b>
+-----&gt; Downloaded app package (21M)
+-----&gt; Java Buildpack Version: v2.6.1 |  https://github.com/cloudfoundry/java-buildpack.git#2d92e70
+-----&gt; Downloading Open Jdk JRE 1.8.0_31 from https://download.run.pivotal.io/openjdk/lucid/x86_64/openjdk-1.8.0_31.tar.gz (1.3s)
+       Expanding Open Jdk JRE to .java-buildpack/open_jdk_jre (1.2s) <b class="conum">(7)</b>
+-----&gt; Downloading Spring Auto Reconfiguration 1.7.0_RELEASE from https://download.run.pivotal.io/auto-reconfiguration/auto-reconfiguration-1.7.0_RELEASE.jar (0.1s)
+-----&gt; Downloading Tomcat Instance 8.0.18 from https://download.run.pivotal.io/tomcat/tomcat-8.0.18.tar.gz (0.4s)
+       Expanding Tomcat to .java-buildpack/tomcat (0.1s) <b class="conum">(8)</b>
+-----&gt; Downloading Tomcat Lifecycle Support 2.4.0_RELEASE from https://download.run.pivotal.io/tomcat-lifecycle-support/tomcat-lifecycle-support-2.4.0_RELEASE.jar (0.0s)
+-----&gt; Downloading Tomcat Logging Support 2.4.0_RELEASE from https://download.run.pivotal.io/tomcat-logging-support/tomcat-logging-support-2.4.0_RELEASE.jar (0.0s)
+-----&gt; Downloading Tomcat Access Logging Support 2.4.0_RELEASE from https://download.run.pivotal.io/tomcat-access-logging-support/tomcat-access-logging-support-2.4.0_RELEASE.jar (0.0s)
+-----&gt; Uploading droplet (66M) <b class="conum">(9)</b>
+
+0 of 1 instances running, 1 starting
+1 of 1 instances running
+
+App started
+
+
+OK
+
+App spring-music was started using this command `JAVA_HOME=$PWD/.java-buildpack/open_jdk_jre JAVA_OPTS="-Djava.io.tmpdir=$TMPDIR -XX:OnOutOfMemoryError=$PWD/.java-buildpack/open_jdk_jre/bin/killjava.sh -Xmx382293K -Xms382293K -XX:MaxMetaspaceSize=64M -XX:MetaspaceSize=64M -Xss995K -Daccess.logging.enabled=false -Dhttp.port=$PORT" $PWD/.java-buildpack/tomcat/bin/catalina.sh run` <b class="conum">(10)</b>
+
+Showing health and status for app spring-music in org oreilly-class / space instructor as mstine@pivotal.io... <b class="conum">(11)</b>
+OK
+
+requested state: started
+instances: 1/1
+usage: 512M x 1 instances
+urls: spring-music-hippest-shaman.cfapps.io
+last uploaded: Fri Feb 13 15:43:08 UTC 2015
+
+     state     since                    cpu    memory           disk
+#0   running   2015-02-13 09:43:55 AM   0.0%   394.5M of 512M   131.1M of 1G</pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
 <li>
-<p><a href="lab_04.html">Lab 4 - Creating a Contract Test with Pact JVM</a></p>
+<p>The CLI is using a manifest to provide necessary configuration details such as application name, memory to be allocated, and path to the application artifact.
+Take a look at <code>manifest.yml</code> to see how.</p>
 </li>
 <li>
-<p><a href="lab_05.html">Lab 5 - Verifying a Contract with Pact JVM</a></p>
+<p>In most cases, the CLI indicates each Cloud Foundry API call as it happens.
+In this case, the CLI has created an application record for <em>Spring Music</em> in your assigned space.</p>
 </li>
 <li>
-<p><a href="lab_06.html">Lab 6 - Publishing a Contract to Pact Broker</a></p>
+<p>All HTTP/HTTPS requests to applications will flow through Cloud Foundry&#8217;s front-end router called <a href="http://docs.cloudfoundry.org/concepts/architecture/router.html">(Go)Router</a>.
+Here the CLI is creating a route with random word tokens inserted (again, see <code>manifest.yml</code> for a hint!) to prevent route collisions across the default <code>cfapps.io</code> domain.</p>
 </li>
-</ul>
+<li>
+<p>Now the CLI is <em>binding</em> the created route to the application.
+Routes can actually be bound to multiple applications to support techniques such as <a href="http://www.mattstine.com/2013/07/10/blue-green-deployments-on-cloudfoundry">blue-green deployments</a>.</p>
+</li>
+<li>
+<p>The CLI finally uploads the application bits to PWS. Notice that it&#8217;s uploading <em>90 files</em>! This is because Cloud Foundry actually explodes a ZIP artifact before uploading it for caching purposes.</p>
+</li>
+<li>
+<p>Now we begin the staging process. The <a href="https://github.com/cloudfoundry/java-buildpack">Java Buildpack</a> is responsible for assembling the runtime components necessary to run the application.</p>
+</li>
+<li>
+<p>Here we see the version of the JRE that has been chosen and installed.</p>
+</li>
+<li>
+<p>And here we see the version of Tomcat that has been chosen and installed.</p>
+</li>
+<li>
+<p>The complete package of your application and all of its necessary runtime components is called a <em>droplet</em>.
+Here the droplet is being uploaded to PWS&#8217;s internal blobstore so that it can be easily copied to one or more <em><a href="http://docs.cloudfoundry.org/concepts/architecture/execution-agent.html">Droplet Execution Agents (DEA&#8217;s)</a></em> for execution.</p>
+</li>
+<li>
+<p>The CLI tells you exactly what command and argument set was used to start your application.</p>
+</li>
+<li>
+<p>Finally the CLI reports the current status of your application&#8217;s health.
+You can get the same output at any time by typing <code>cf app spring-music</code>.</p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </li>
 <li>
-<p>Session 4 (<a href="session_04/session_04.pdf">Slides</a>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="lab_07.html">Lab 7 - From Zero to Pushing Your First Application</a></p>
-</li>
-<li>
-<p><a href="lab_08.html">Lab 8 - Binding to Cloud Foundry Services</a></p>
-</li>
-<li>
-<p><a href="lab_09.html">Lab 9 - Scaling Applications</a></p>
-</li>
-<li>
-<p><a href="lab_10.html">Lab 10 - Monitoring Applications</a></p>
-</li>
-<li>
-<p><a href="lab_11.html">Lab 11 - Push Microservices to Cloud Foundry</a></p>
-</li>
-</ul>
+<p>Visit the application in your browser by hitting the route that was generated by the CLI:</p>
+<div class="imageblock">
+<div class="content">
+<img src="../../Common/images/Spring_Music_NS.png" alt="Spring Music NS">
+</div>
+</div>
+<div class="paragraph">
+<p>Be sure to click on the &#8220;information icon&#8221; in the top right-hand corner of the UI.
+This gives you important information about the state of the currently running <em>Spring Music</em> instance, including what Spring Profiles are turned on and what Cloud Foundry services are bound.
+It will become important in the next lab!</p>
 </div>
 </li>
-</ul>
+</ol>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 12:48:56 PDT
+Last updated 2015-05-19 10:20:42 PDT
 </div>
 </div>
 </body>
