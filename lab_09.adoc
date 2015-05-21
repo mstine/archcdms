@@ -13,7 +13,7 @@ In this lab, we'll use a Spring Boot CLI app designed to illustrate Cloud Foundr
 . Change to the `cf-scale-boot` sample application directory:
 +
 ----
-$ cd $COURSE_HOME/lab_09/cf-scale-boot
+$ cd $COURSE_HOME/labs/complete/cf-scale-boot
 ----
 
 . Spring Boot CLI applications do not require a separate build step, so go ahead and push the application:

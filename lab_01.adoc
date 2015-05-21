@@ -22,7 +22,7 @@ Spring Boot Version 1.2.3
 * Web
 
 . Click the *Generate Project* button. Your browser will download a zip file.
-Unpack that zip file at `$COURSE_HOME/session_01/lab_01/initial`.
+Unpack that zip file at `$COURSE_HOME/labs/initial`.
 
 . Import the project's `pom.xml` into your editor/IDE of choice.
 
