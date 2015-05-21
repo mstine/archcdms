@@ -1,3 +1,92 @@
+:compat-mode:
 = Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS
 
-TODO
+In this lab we're going to build a Fortune Teller application from two microservices, one that serves up random Chinese fortune cookie fortunes, and one that presents a user interface.
+The resulting application looks like the following screenshot:
+
+image::Common/images/fortunes-ui.png[width=50%]
+
+We'll leverage libraries and services from Spring Cloud and Netflix OSS to help us compose the system.
+
+== Bootstrapping
+
+. Choose *File -> Import*:
++
+image::Common/images/sts_import_1.png[width=50%]
+
+. Choose *Maven -> Existing Maven Projects*:
++
+image::Common/images/sts_import_2.png[width=50%]
+
+. Choose the project's `pom.xml`, found at `$COURSE_HOME/labs/initial/fortune-teller` and click *Finish*.
++
+image::Common/images/sts_import_3.png[width=50%]
+
+== Config Server
+
+First we'll create a Spring Cloud Config Server to distribute shared configuration across our distributed system.
+This configuration will form the basis of how the entire system will compose.
+
+. In the `fortune-teller-config-server` module, add a `@EnableConfigServer` annotation to the class `io.spring.cloud.samples.fortuneteller.configserver.Application`.
+
+. Paste the following configuration properties into the file `src/main/resources/application.yml`:
++
+----
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/mstine/config-repo.git
+----
++
+These properties tell the Config Server to listen on port `8888` and to source its configuration from the Git repository found at https://github.com/mstine/config-repo.
+
+. Browse the file https://github.com/mstine/config-repo/blob/master/application.yml#L1-L18.
+These lines tell all applications using the `cloud` Spring profile how to connect to and register themselves with Eureka.
+
+. Right click on `io.spring.cloud.samples.fortuneteller.configserver.Application` and choose *Run As -> Spring Boot App*:
++
+image::Common/images/sts_run_as_boot.png[width=50%]
+
+. Browse to http://localhost:8888/application/default.
+You should see output similar to the following:
++
+image::Common/images/config_server_output.png[width=50%]
++
+Note that the response JSON defines a Spring `PropertySource` that contains Eureka configuration consistent with what you saw in the Git repository.
+
+== Eureka Server
+
+Next we'll create a Eureka service registry using Spring Cloud Netflix.
+This server will act as the address book our UI application will use to locate the Fortune Service.
+
+. In the `fortune-teller-eureka` module, add a `@EnableEurekaServer` annotation to the class `io.spring.cloud.samples.fortuneteller.eureka.Application`.
+
+. Paste the following configuration properties into the file `src/main/resources/application.yml`:
++
+----
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+----
++
+These properties tell the Eureka Server to listen on port `8761` and to configure itself in what is essentially ``standalone'' mode.
+
+. As before, right click on `io.spring.cloud.samples.fortuneteller.eureka.Application` and choose *Run As -> Spring Boot App*.
+
+. Browse to http://localhost:8761.
+You should see a UI similar to the following:
++
+image::Common/images/eureka_1.png[]

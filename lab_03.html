@@ -685,13 +685,167 @@ b.conum * { color: inherit !important; }
 <h1>Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS</h1>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;re going to build a Fortune Teller application from two microservices, one that serves up random Chinese fortune cookie fortunes, and one that presents a user interface.
+The resulting application looks like the following screenshot:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/fortunes-ui.png" alt="fortunes ui" width="50%">
+</div>
+</div>
+<div class="paragraph">
+<p>We&#8217;ll leverage libraries and services from Spring Cloud and Netflix OSS to help us compose the system.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bootstrapping">Bootstrapping</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Choose <strong>File &#8594; Import</strong>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/sts_import_1.png" alt="sts import 1" width="50%">
+</div>
+</div>
+</li>
+<li>
+<p>Choose <strong>Maven &#8594; Existing Maven Projects</strong>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/sts_import_2.png" alt="sts import 2" width="50%">
+</div>
+</div>
+</li>
+<li>
+<p>Choose the project&#8217;s <code>pom.xml</code>, found at <code>$COURSE_HOME/labs/initial/fortune-teller</code> and click <strong>Finish</strong>.</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/sts_import_3.png" alt="sts import 3" width="50%">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_config_server">Config Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First we&#8217;ll create a Spring Cloud Config Server to distribute shared configuration across our distributed system.
+This configuration will form the basis of how the entire system will compose.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <code>fortune-teller-config-server</code> module, add a <code>@EnableConfigServer</code> annotation to the class <code>io.spring.cloud.samples.fortuneteller.configserver.Application</code>.</p>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/application.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/mstine/config-repo.git</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These properties tell the Config Server to listen on port <code>8888</code> and to source its configuration from the Git repository found at <a href="https://github.com/mstine/config-repo" class="bare">https://github.com/mstine/config-repo</a>.</p>
+</div>
+</li>
+<li>
+<p>Browse the file <a href="https://github.com/mstine/config-repo/blob/master/application.yml#L1-L18" class="bare">https://github.com/mstine/config-repo/blob/master/application.yml#L1-L18</a>.
+These lines tell all applications using the <code>cloud</code> Spring profile how to connect to and register themselves with Eureka.</p>
+</li>
+<li>
+<p>Right click on <code>io.spring.cloud.samples.fortuneteller.configserver.Application</code> and choose <strong>Run As &#8594; Spring Boot App</strong>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/sts_run_as_boot.png" alt="sts run as boot" width="50%">
+</div>
+</div>
+</li>
+<li>
+<p>Browse to <a href="http://localhost:8888/application/default" class="bare">http://localhost:8888/application/default</a>.
+You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/config_server_output.png" alt="config server output" width="50%">
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the response JSON defines a Spring <code>PropertySource</code> that contains Eureka configuration consistent with what you saw in the Git repository.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_eureka_server">Eureka Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next we&#8217;ll create a Eureka service registry using Spring Cloud Netflix.
+This server will act as the address book our UI application will use to locate the Fortune Service.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <code>fortune-teller-eureka</code> module, add a <code>@EnableEurekaServer</code> annotation to the class <code>io.spring.cloud.samples.fortuneteller.eureka.Application</code>.</p>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/application.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These properties tell the Eureka Server to listen on port <code>8761</code> and to configure itself in what is essentially &#8220;standalone&#8221; mode.</p>
+</div>
+</li>
+<li>
+<p>As before, right click on <code>io.spring.cloud.samples.fortuneteller.eureka.Application</code> and choose <strong>Run As &#8594; Spring Boot App</strong>.</p>
+</li>
+<li>
+<p>Browse to <a href="http://localhost:8761" class="bare">http://localhost:8761</a>.
+You should see a UI similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/eureka_1.png" alt="eureka 1">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 13:02:11 PDT
+Last updated 2015-05-21 15:52:11 PDT
 </div>
 </div>
 </body>
