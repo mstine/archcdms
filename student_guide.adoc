@@ -37,11 +37,11 @@ This script will perform some setup that was left out of the initial machine ima
 ** link:lab_01.html[Lab 1 - Getting Started with Spring Boot]
 ** link:lab_02.html[Lab 2 - Introspection, Monitoring, and Metrics using Spring Boot Actuator]
 ** link:lab_03.html[Lab 3 - Composing Microservices with Spring Cloud and Netflix OSS]
-* Session 3 (link:session_03/session_03.pdf[Slides])
+* Session 3 (link:session_03.pdf[Slides])
 ** link:lab_04.html[Lab 4 - Creating a Contract Test with Pact JVM]
 ** link:lab_05.html[Lab 5 - Verifying a Contract with Pact JVM]
 ** link:lab_06.html[Lab 6 - Publishing a Contract to Pact Broker]
-* Session 4 (link:session_04/session_04.pdf[Slides])
+* Session 4 (link:session_04.pdf[Slides])
 ** link:lab_07.html[Lab 7 - From Zero to Pushing Your First Application]
 ** link:lab_08.html[Lab 8 - Binding to Cloud Foundry Services]
 ** link:lab_09.html[Lab 9 - Scaling Applications]
