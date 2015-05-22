@@ -364,7 +364,7 @@ fortunes:
 This configuration instructs the application to listen on port 8081.
 It also provides low cache refresh settings for the Eureka client and Ribbon to make the demo more responsive.
 
-. As before, right click on `io.spring.cloud.samples.fortuneteller.eureka.Application` and choose *Run As -> Spring Boot App*.
+. As before, right click on `io.spring.cloud.samples.fortuneteller.ui.Application` and choose *Run As -> Spring Boot App*.
 
 . After the service has been running for ten seconds, refresh your Eureka browser tab.
 You should see a registration entry for the Fortune UI.
@@ -401,7 +401,7 @@ server:
 +
 This configuration instructs the application to listen on port `7979`.
 
-. As before, right click on `io.spring.cloud.samples.fortuneteller.eureka.Application` and choose *Run As -> Spring Boot App*.
+. As before, right click on `io.spring.cloud.samples.fortuneteller.ui.Application` and choose *Run As -> Spring Boot App*.
 
 . Visit http://localhost:7979.
 You should see output similar to the following:
