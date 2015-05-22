@@ -10,14 +10,18 @@ mstine@pivotal.io
 
 == Schedule
 
+_This is a *loose* schedule for the day to give us some structure.
+We will adjust as necessary based on our flow through the content.
+Our only fixed break is lunch._
+
  7:30 AM - 8:30 AM:: Breakfast
- 8:30 AM - 10:00 AM:: *Session 1*: _Continuous Delivery with Microservices Overview_
-10:00 AM - 10:15 AM:: Morning Brain Break
-10:15 AM - 12:00 PM:: *Session 2*: _Building and Composing Microservices_
+ 8:30 AM - 9:30 AM:: *Session 1*: _Continuous Delivery with Microservices Overview_
+ 9:30 AM - 9:45 AM:: Morning Brain Break
+ 9:45 AM - 12:00 PM:: *Session 2*: _Building and Composing Microservices_
 12:00 PM - 1:15 PM:: Lunch
- 1:15 PM - 3:00 PM:: *Session 3*: _Testing and Delivering Microservices_
- 3:00 PM - 3:15 PM:: Afternoon Brain Break
- 3:15 PM - 5:00 PM:: *Session 4*: _Deploying and Running Microservices_
+ 1:15 PM - 2:45 PM:: *Session 3*: _Testing and Delivering Microservices_
+ 2:45 PM - 3:00 PM:: Afternoon Brain Break
+ 3:00 PM - 5:00 PM:: *Session 4*: _Deploying and Running Microservices_
 
 == First Things First
 
