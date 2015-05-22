@@ -225,7 +225,7 @@ spring:
 +
 This configuration specifies the model to DDL setting to be used by Hibernate, as well as the Hibernate dialects to be used for local development and cloud.
 
-. As before, right click on `io.spring.cloud.samples.fortuneteller.eureka.Application` and choose *Run As -> Spring Boot App*.
+. As before, right click on `io.spring.cloud.samples.fortuneteller.fortuneservice.Application` and choose *Run As -> Spring Boot App*.
 
 . After the service has been running for ten seconds, refresh your Eureka browser tab.
 You should see a registration entry for the fortune service.
