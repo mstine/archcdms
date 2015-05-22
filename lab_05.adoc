@@ -1,3 +1,84 @@
+:compat-mode:
 = Lab 5 - Verifying a Contract with Pact JVM
 
-TODO
+In this lab we will verify the provider side of the consumer-driven contract by playing the ``pact'' back against the Fortune Service.
+
+. In a terminal window, change to the directory of the fortune service:
++
+----
+$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-fortune-service
+----
+
+. Build the application:
++
+----
+$ mvn packge
+----
+
+. Run the application:
++
+----
+$ java -jar target/fortune-teller-fortune-service-0.0.1-SNAPSHOT.jar
+----
++
+The application will start running.
+Don't worry if you see a few stack traces.
+If you do not have Eureka running, this will happen.
+For this lab it is *OK*.
+
+. The necessary infrastructure for verifying a pact has already been added to `pom.xml` for the fortune service.
+Take a look and you'll see the following:
++
+----
+<build>
+		<plugins>
+			<plugin>
+				<groupId>au.com.dius</groupId>
+				<artifactId>pact-jvm-provider-maven_2.11</artifactId>
+				<version>2.1.13</version>
+				<configuration>
+					<serviceProviders>
+						<serviceProvider>
+							<name>FortuneService</name>
+							<consumers>
+								<consumer>
+									<name>FortuneUi</name>
+									<pactFile>../fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json</pactFile>
+								</consumer>
+							</consumers>
+						</serviceProvider>
+					</serviceProviders>
+				</configuration>
+			</plugin>
+		</plugins>
+</build>
+----
++
+This uses the Pact JVM Provider Maven plugin to specify that the pact found at `../fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json` should be replayed against the `FortuneService` on behalf of the `FortuneUi`.
+
+. In a separate terminal window, change to the directory of the fortune service:
++
+----
+$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-fortune-service
+----
+
+. Verify the pact:
++
+----
+$ mvn au.com.dius:pact-jvm-provider-maven_2.11:verify
+----
++
+You should see output similar to the following:
++
+----
+Verifying a pact between FortuneUi and FortuneService
+  [Using file /Users/pivotal/mstine/2015/archcdms/labs/initial/fortune-teller/fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json]
+  Given FortuneState
+         WARNING: Provider State ignored as there is no stateChange URL defined
+  a request for a random fortune
+    returns a response which
+      has status code 200 (OK)
+      includes headers
+        "Content-Type" with value "application/json;charset=UTF-8" (OK)
+      has a matching body (OK)
+----

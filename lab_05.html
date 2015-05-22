@@ -686,12 +686,112 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we will verify the provider side of the consumer-driven contract by playing the &#8220;pact&#8221; back against the Fortune Service.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a terminal window, change to the directory of the fortune service:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-fortune-service</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn packge</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the application:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ java -jar target/fortune-teller-fortune-service-0.0.1-SNAPSHOT.jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application will start running.
+Don&#8217;t worry if you see a few stack traces.
+If you do not have Eureka running, this will happen.
+For this lab it is <strong>OK</strong>.</p>
+</div>
+</li>
+<li>
+<p>The necessary infrastructure for verifying a pact has already been added to <code>pom.xml</code> for the fortune service.
+Take a look and you&#8217;ll see the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;au.com.dius&lt;/groupId&gt;
+				&lt;artifactId&gt;pact-jvm-provider-maven_2.11&lt;/artifactId&gt;
+				&lt;version&gt;2.1.13&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;serviceProviders&gt;
+						&lt;serviceProvider&gt;
+							&lt;name&gt;FortuneService&lt;/name&gt;
+							&lt;consumers&gt;
+								&lt;consumer&gt;
+									&lt;name&gt;FortuneUi&lt;/name&gt;
+									&lt;pactFile&gt;../fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json&lt;/pactFile&gt;
+								&lt;/consumer&gt;
+							&lt;/consumers&gt;
+						&lt;/serviceProvider&gt;
+					&lt;/serviceProviders&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+&lt;/build&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This uses the Pact JVM Provider Maven plugin to specify that the pact found at <code>../fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json</code> should be replayed against the <code>FortuneService</code> on behalf of the <code>FortuneUi</code>.</p>
+</div>
+</li>
+<li>
+<p>In a separate terminal window, change to the directory of the fortune service:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-fortune-service</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify the pact:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ mvn au.com.dius:pact-jvm-provider-maven_2.11:verify</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Verifying a pact between FortuneUi and FortuneService
+  [Using file /Users/pivotal/mstine/2015/archcdms/labs/initial/fortune-teller/fortune-teller-ui/target/pacts/FortuneUi-FortuneService.json]
+  Given FortuneState
+         WARNING: Provider State ignored as there is no stateChange URL defined
+  a request for a random fortune
+    returns a response which
+      has status code 200 (OK)
+      includes headers
+        "Content-Type" with value "application/json;charset=UTF-8" (OK)
+      has a matching body (OK)</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 13:02:40 PDT
+Last updated 2015-05-21 22:42:13 PDT
 </div>
 </div>
 </body>
