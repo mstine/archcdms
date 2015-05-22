@@ -30,6 +30,8 @@ Pivotal Web Services is a hosted instance of http://cloudfoundry.org[Cloud Found
 . Run the script found at `$COURSE_HOME/labs/setup_pact.sh`.
 This script will perform some setup that was left out of the initial machine image.
 
+NOTE: For this workshop, where you see `$COURSE_HOME`, the directory is `/home/workshop/workspace/archcdms`.
+
 == Course Materials
 
 * Session 1 (link:session_01.pdf[Slides])
