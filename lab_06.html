@@ -686,12 +686,118 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;ll publish the &#8220;pact&#8221; we generated in <a href="lab_04.html">Lab 4</a> to a running instance of Pact Broker.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+These instructions assume you&#8217;ve already executed the <code>setup_pact.sh</code> script mentioned in the <a href="student_guide.html">Student Guide</a> under <strong>First Things First</strong>.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Change to the Pact Broker example directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd $COURSE_HOME/labs/pact_broker/example</pre>
+</div>
+</div>
+</li>
+<li>
+<p>In case you have a stale terminal session, make sure RVM is initialized:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ source /home/workshop/.rvm/scripts/rvm</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start Pact Broker:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ bundle exec rackup</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Thin web server (v1.6.3 codename Protein Powder)
+Maximum connections set to 1024
+Listening on localhost:9292, CTRL+C to stop</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visit <a href="http://localhost:9292" class="bare">http://localhost:9292</a>.
+You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/pact_broker_1.png" alt="pact broker 1">
+</div>
+</div>
+</li>
+<li>
+<p>In another terminal window, change to the following directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-ui/target/pacts</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Publish the pact using cURL:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ curl -i -X PUT http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0 -H "Content-Type: application/json" -d@FortuneUi-FortuneService.json</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see output similar to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Length: 2088
+Server: Webmachine-Ruby/1.2.0 Rack/1.3
+Connection: keep-alive
+
+{"provider":{"name":"FortuneService"},"consumer":{"name":"FortuneUi"},"interactions":[{"providerState":"FortuneState","description":"a request for a random fortune","request":{"method":"GET","path":"/random"},"response":{"status":200,"headers":{"Content-Type":"application/json;charset=UTF-8"},"body":{"id":6273300129,"text":"YQEokQivJfDaCXAEIvZH"},"responseMatchingRules":{"$.body.id":{"match":"type"},"$.body.text":{"match":"type"}}}}],"metadata":{"pact-specification":{"version":"2.0.0"},"pact-jvm":{"version":"2.1.13"}},"createdAt":"2015-05-22T06:46:46+00:00","_links":{"self":{"title":"Pact","name":"Pact between FortuneUi (v1.0.0) and FortuneService","href":"http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0"},"pb:consumer":{"title":"Consumer","name":"FortuneUi","href":"http://localhost:9292/pacticipants/FortuneUi"},"pb:provider":{"title":"Provider","name":"FortuneService","href":"http://localhost:9292/pacticipants/FortuneService"},"pb:latest-pact-version":{"title":"Pact","name":"Latest version of this pact","href":"http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/latest"},"pb:previous-distinct":{"title":"Pact","name":"Previous distinct version of this pact","href":"http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0/previous-distinct"},"pb:diff-previous-distinct":{"title":"Diff","name":"Diff with previous distinct version of this pact","href":"http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0/diff/previous-distinct"},"pb:pact-webhooks":{"title":"Webhooks for the pact between FortuneUi and FortuneService","href":"http://localhost:9292/webhooks/provider/FortuneService/consumer/FortuneUi"},"pb:tag-prod-version":{"title":"Tag this version as 'production'","href":"http://localhost:9292/pacticipants/FortuneUi/versions/1.0.0/tags/prod"},"pb:tag-version":{"title":"Tag version","href":"http://localhost:9292/pacticipants/FortuneUi/versions/1.0.0/tags/{tag}"},"curies":[{"name":"pb","href":"http://localhost:9292/doc/{rel}","templated":true}]}}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Refresh your Pact Broker browser tab. You should see your pact added:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/pact_broker_2.png" alt="pact broker 2">
+</div>
+</div>
+</li>
+<li>
+<p>Click on the &#8220;document&#8221; icon for your Pact.
+You will see a nicely formatted, human readable version of your pact:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/pact_broker_3.png" alt="pact broker 3">
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 13:02:57 PDT
+Last updated 2015-05-21 23:50:16 PDT
 </div>
 </div>
 </body>
