@@ -51,12 +51,12 @@ It will add Git branch and commit coordinates to the `/info` endpoint:
 	<groupId>pl.project13.maven</groupId>
 	<artifactId>git-commit-id-plugin</artifactId>
 	<configuration>
-			<dotGitDirectory>../../../../../.git</dotGitDirectory>
+			<dotGitDirectory>../../../.git</dotGitDirectory>
 	</configuration>
 </plugin>
 ----
 +
-NOTE: The path `../../../../../.git` refers to the `.git` directory at the root of the course materials.
+NOTE: The path `../../../.git` refers to the `.git` directory at the root of the course materials.
 
 . Add the following properties to `src/main/resources/application.yml`:
 +
