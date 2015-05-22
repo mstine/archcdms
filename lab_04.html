@@ -686,12 +686,193 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;ll start leveraging Pact JVM to create a consumer-driven contract between our UI (consumer) and Fortune Service (provider).</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the test class <code>io.spring.cloud.samples.fortuneteller.ui.services.fortunes.FortuneServicePactTest</code>.
+Into this class paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@RunWith(SpringJUnit4ClassRunner.class) <b class="conum">(1)</b>
+@SpringApplicationConfiguration(classes = Application.class)
+@WebAppConfiguration
+@ActiveProfiles({"pact"})
+public class FortuneServicePactTest {
+
+    @Autowired
+    FortuneService fortuneService; <b class="conum">(2)</b>
+
+    @Rule
+    public PactRule rule = new PactRule("localhost", 8080, this); <b class="conum">(3)</b>
+
+    @Pact(state = "FortuneState", provider = "FortuneService", consumer = "FortuneUi") <b class="conum">(4)</b>
+    public PactFragment createFragment(ConsumerPactBuilder.PactDslWithProvider.PactDslWithState builder) {
+        Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();
+        headers.put("Content-Type", "application/json;charset=UTF-8");
+
+        PactDslJsonBody responseBody = new PactDslJsonBody()
+                .numberType("id")
+                .stringType("text");
+
+        return builder.uponReceiving("a request for a random fortune")
+                .path("/random")
+                .method("GET")
+                .willRespondWith()
+                .headers(headers)
+                .status(200)
+                .body(responseBody).toFragment();
+    }
+
+    @Test
+    @PactVerification("FortuneState") <b class="conum">(5)</b>
+    public void runTest() {
+        Fortune fortune = fortuneService.randomFortune();
+        assertNotNull(fortune);
+        assertThat(fortune.getId(), is(greaterThan(0L)));
+        assertThat(fortune.getId(), is(not(equalTo(42L))));
+        assertThat(fortune.getText(), not(isEmptyOrNullString()));
+        assertThat(fortune.getText(), is(not(equalTo("Your future is unclear."))));
+    }
+}</pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>These class level annotations instruct JUnit to run the tests using Spring&#8217;s testing infrastructure.</p>
+</li>
+<li>
+<p>Here we autowire in an instance of our <code>FortuneService</code> bean, which was created when Spring&#8217;s testing infrastructure bootstrapped our context.</p>
+</li>
+<li>
+<p>The <code>@Rule</code> annotation here causes JUnit&#8217;s <a href="https://github.com/junit-team/junit/wiki/Rules">rule support</a> to run a Pact JVM mock server for each test.</p>
+</li>
+<li>
+<p>This method configures the consumer-side of the contract.
+It first specifies a &#8220;random&#8221; JSON fragment representing a fortune (using <code>PactDslJsonBody</code>).
+It then uses Pact JVM&#8217;s builder to construct the consumer&#8217;s expectation of the random fortune endpoint on the Fortune Service.</p>
+</li>
+<li>
+<p>This method runs the actual test and asserts that we are in fact not receiving the fallback response triggered by an open Hystrix circuit breaker.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.
+You may need to manually add the static import for <code>org.hamcrest.Matchers.*</code>.</p>
+</div>
+</li>
+<li>
+<p>Paste an additional YAML document into <code>src/main/resources/application.yml</code> such that your completed file looks like the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>server:
+  port: 8081
+
+eureka:
+  client:
+    registryFetchIntervalSeconds: 5
+
+fortunes:
+  ribbon:
+    ServerListRefreshInterval: 5000
+
+---
+
+spring:
+  profiles: pact
+
+ribbon:
+  eureka:
+    enabled: false
+
+hystrix:
+  command:
+    randomFortune:
+      execution.isolation.thread.timeoutInMilliseconds: 2000
+
+fortunes:
+  ribbon:
+    listOfServers: localhost:8080</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This new document specifies a Spring Profile called <code>pact</code>, which was also referenced via the <code>@ActiveProfiles</code> annotation in <code>FortuneServicePactTest</code>.
+This configuration turns off Eureka discovery for Ribbon, and instead manually specifies the server list to coincide with the address of the Pact JVM mock server.
+It also specifies a longer timout for the circuit breaker to enable the Pact JVM mock server time to start up.</p>
+</div>
+</li>
+<li>
+<p>Right-click on <code>FortuneServicePactTest</code> and click <strong>Run As &#8594; JUnit Test</strong>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/sts_run_as_junit.png" alt="sts run as junit" width="50%">
+</div>
+</div>
+</li>
+<li>
+<p>You should see the test pass!</p>
+</li>
+<li>
+<p>Look in the directory <code>fortune-teller-ui/target/pacts</code>.
+You should see a file named <code>FortuneUI-FortuneService.json</code>.
+This file represents the &#8220;pact&#8221;, or consumer-driven contract, between the UI and Fortune Service.
+The contents should be similar to the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "provider" : {
+    "name" : "FortuneService"
+  },
+  "consumer" : {
+    "name" : "FortuneUi"
+  },
+  "interactions" : [ {
+    "providerState" : "FortuneState",
+    "description" : "a request for a random fortune",
+    "request" : {
+      "method" : "GET",
+      "path" : "/random"
+    },
+    "response" : {
+      "status" : 200,
+      "headers" : {
+        "Content-Type" : "application/json;charset=UTF-8"
+      },
+      "body" : {
+        "id" : 6273300129,
+        "text" : "YQEokQivJfDaCXAEIvZH"
+      },
+      "responseMatchingRules" : {
+        "$.body.id" : {
+          "match" : "type"
+        },
+        "$.body.text" : {
+          "match" : "type"
+        }
+      }
+    }
+  } ],
+  "metadata" : {
+    "pact-specification" : {
+      "version" : "2.0.0"
+    },
+    "pact-jvm" : {
+      "version" : "2.1.13"
+    }
+  }
+}</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 15:08:25 PDT
+Last updated 2015-05-21 22:31:11 PDT
 </div>
 </div>
 </body>
