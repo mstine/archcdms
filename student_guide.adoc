@@ -19,8 +19,14 @@ mstine@pivotal.io
  3:00 PM - 3:15 PM:: Afternoon Brain Break
  3:15 PM - 5:00 PM:: *Session 4*: _Deploying and Running Microservices_
 
-== Course Materials
+== First Things First
 
+. Create a Pivotal Web Services account https://console.run.pivotal.io/register[here].
+Pivotal Web Services is a hosted instance of http://cloudfoundry.org[Cloud Foundry] that is operated by http://pivotal.io[Pivotal].
+. Run the script found at `$COURSE_HOME/labs/setup_pact.sh`.
+This script will perform some setup that was left out of the initial machine image.
+
+== Course Materials
 
 * Session 1 (link:session_01.pdf[Slides])
 * Session 2 (link:session_02.pdf[Slides])
