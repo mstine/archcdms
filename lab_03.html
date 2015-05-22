@@ -842,10 +842,427 @@ You should see a UI similar to the following:</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_fortune_service">Fortune Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that our Spring Cloud/Netflix OSS infrastructure is bootstrapped, we&#8217;ll begin development of our first microservice.
+The Fortune Service will serve up a list of all fortune cookie fortunes present in its database or a single random fortune.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <code>fortune-teller-fortune-service</code> module, create the package <code>io.spring.cloud.samples.fortuneteller.fortuneservice.domain</code>.</p>
+</li>
+<li>
+<p>Create a JPA domain class, <code>io.spring.cloud.samples.fortuneteller.fortuneservice.domain.Fortune</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@Entity
+@Table(name = "fortunes")
+public class Fortune {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
+    private String text;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This class represents the domain model for a fortune, having an unique identifier and the fortune&#8217;s text.</p>
+</div>
+</li>
+<li>
+<p>Next, create the package <code>io.spring.cloud.samples.fortuneteller.fortuneservice.repositories</code>.</p>
+</li>
+<li>
+<p>Create a Spring Data JPA repository interface, <code>io.spring.cloud.samples.fortuneteller.fortuneservice.repositories.FortuneRepository</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>public interface FortuneRepository extends PagingAndSortingRepository&lt;Fortune, Long&gt; {
+
+    @Query("select fortune from Fortune fortune order by RAND()")
+    public List&lt;Fortune&gt; randomFortunes(Pageable pageable);
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This interface will provide all of the basic boilerplate CRUD features we&#8217;ll want for our <code>Fortune</code> domain class.
+The <code>@Query</code> annotation defines a SQL statement that will return a random ordering of the fortunes.
+We&#8217;ll use this as the basis of returning a random fortune via our REST interface.</p>
+</div>
+</li>
+<li>
+<p>Next, create the package <code>io.spring.cloud.samples.fortuneteller.fortuneservice.controllers</code>.</p>
+</li>
+<li>
+<p>Create a Spring MVC Controller class, <code>io.spring.cloud.samples.fortuneteller.fortuneservice.controllers.FortuneController</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@RestController
+public class FortuneController {
+
+    @Autowired
+    FortuneRepository repository;
+
+    @RequestMapping("/fortunes")
+    public Iterable&lt;Fortune&gt; fortunes() {
+        return repository.findAll();
+    }
+
+    @RequestMapping("/random")
+    public Fortune randomFortune() {
+        List&lt;Fortune&gt; randomFortunes = repository.randomFortunes(new PageRequest(0, 1));
+        return randomFortunes.get(0);
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This class provides the two REST endpoints of our microservice.
+The <code>randomFortune</code> method provides a <code>PageRequest</code> to limit the returned results to one.</p>
+</div>
+</li>
+<li>
+<p>Add <code>@EnableJpaRepositories</code> (to enable the Spring Data JPA repository we created) and <code>@EnableDiscoveryClient</code> (to switch on Eureka registration) annotations to <code>io.spring.cloud.samples.fortuneteller.fortuneservice.Application</code>.</p>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/bootstrap.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>spring:
+  application:
+    name: fortunes
+  cloud:
+    config:
+      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration specifies the name of the application, which will be used to register the service in Eureka.
+It also tells the service how to locate the config server.</p>
+</div>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/application.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+---
+
+spring:
+  profiles: default
+  jpa:
+    database: HSQL
+
+---
+
+spring:
+  profiles: cloud
+  jpa:
+    database: POSTGRESQL</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration specifies the model to DDL setting to be used by Hibernate, as well as the Hibernate dialects to be used for local development and cloud.</p>
+</div>
+</li>
+<li>
+<p>As before, right click on <code>io.spring.cloud.samples.fortuneteller.eureka.Application</code> and choose <strong>Run As &#8594; Spring Boot App</strong>.</p>
+</li>
+<li>
+<p>After the service has been running for ten seconds, refresh your Eureka browser tab.
+You should see a registration entry for the fortune service.</p>
+</li>
+<li>
+<p>Visit <a href="http://localhost:8080/random" class="bare">http://localhost:8080/random</a>. You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/fortune_service_output.png" alt="fortune service output">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fortune_ui">Fortune UI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that our Fortune microservice is running, we&#8217;ll begin development of our second microservice.
+The Fortune UI will serve up a AngularJS single page application that consumes the fortune service.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <code>fortune-teller-ui</code> module, create the package <code>io.spring.cloud.samples.fortuneteller.ui.service.fortunes</code>.
+This package will contain our integration with the fortune service.</p>
+</li>
+<li>
+<p>Create the POJO <code>io.spring.cloud.samples.fortuneteller.ui.services.fortunes.Fortune</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>public class Fortune {
+    private Long id;
+    private String text;
+
+    public Fortune() {
+    }
+
+    public Fortune(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We will use this class to unmarshal the response from the fortune service.</p>
+</div>
+</li>
+<li>
+<p>Create the Spring Bean <code>io.spring.cloud.samples.fortuneteller.ui.services.fortunes.FortuneService</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@Service
+public class FortuneService {
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @HystrixCommand(fallbackMethod = "fallbackFortune")
+    public Fortune randomFortune() {
+        return restTemplate.getForObject("http://fortunes/random", Fortune.class);
+    }
+
+    private Fortune fallbackFortune() {
+        return new Fortune(42L, "Your future is unclear.");
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This class is our integration point with the fortune service.
+It uses a special <code>RestTemplate</code> bean that integrates with Ribbon from Netflix OSS.
+The argument passed to <code>getForObject</code>, <code>http://fortunes/random</code>, will be resolved by Ribbon to the actual address of the fortune service.
+This method is also protected by a Hystrix circuit breaker using the <code>@HystrixCommand</code> annotation.
+If the circuit is tripped to open (due to an unhealthy fortune service), the <code>fallbackFortune</code> method will return a dummy response.</p>
+</div>
+</li>
+<li>
+<p>Next, create the package <code>io.spring.cloud.samples.fortuneteller.ui.controllers</code>.</p>
+</li>
+<li>
+<p>Create a Spring MVC Controller class, <code>io.spring.cloud.samples.fortuneteller.ui.controllers.UiController</code>.
+Into that class, paste the following code:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@RestController
+public class UiController {
+
+    @Autowired
+    FortuneService service;
+
+    @RequestMapping("/random")
+    public Fortune randomFortune() {
+        return service.randomFortune();
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This class provides the REST endpoint that will be consumed by our AngularJS UI.</p>
+</div>
+</li>
+<li>
+<p>Add <code>@EnableCircuitBreaker</code> (to switch on Hystrix circuit breakers) and <code>@EnableDiscoveryClient</code> (to switch on Eureka registration) annotations to <code>io.spring.cloud.samples.fortuneteller.ui.Application</code>.</p>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/bootstrap.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>spring:
+  application:
+    name: ui
+  cloud:
+    config:
+      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration specifies the name of the application, which will be used to register the service in Eureka.
+It also tells the service how to locate the config server.</p>
+</div>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/application.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>server:
+  port: 8081
+
+eureka:
+  client:
+    registryFetchIntervalSeconds: 5
+
+fortunes:
+  ribbon:
+    ServerListRefreshInterval: 5000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration instructs the application to listen on port 8081.
+It also provides low cache refresh settings for the Eureka client and Ribbon to make the demo more responsive.</p>
+</div>
+</li>
+<li>
+<p>As before, right click on <code>io.spring.cloud.samples.fortuneteller.eureka.Application</code> and choose <strong>Run As &#8594; Spring Boot App</strong>.</p>
+</li>
+<li>
+<p>After the service has been running for ten seconds, refresh your Eureka browser tab.
+You should see a registration entry for the Fortune UI.</p>
+</li>
+<li>
+<p>Visit <a href="http://localhost:8081" class="bare">http://localhost:8081</a>. You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/fortunes-ui.png" alt="fortunes ui" width="50%">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hystrix_dashboard">Hystrix Dashboard</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Finally, we&#8217;ll add one more piece of infrastructure&#8201;&#8212;&#8201;a dashboard that allows us to monitor our circuit breakers&#8201;&#8212;&#8201;using Spring Cloud Netflix.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <code>fortune-teller-hystrix-dashboard</code> module, add <code>@EnableHystrixDashboard</code> and <code>@Controller</code> annotations to the class <code>io.spring.cloud.samples.fortuneteller.hystrixdashboard.Application</code>.</p>
+</li>
+<li>
+<p>Add the following request handler method to <code>io.spring.cloud.samples.fortuneteller.hystrixdashboard.Application</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>@RequestMapping("/")
+public String home() {
+    return "forward:/hystrix";
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the appropriate imports using the IDE&#8217;s quick fix feature.</p>
+</div>
+<div class="paragraph">
+<p>This request handler will allow us to hit the default endpoint our application to interact with the Hystrix Dashboard.</p>
+</div>
+</li>
+<li>
+<p>Paste the following configuration properties into the file <code>src/main/resources/application.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>server:
+  port: 7979</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration instructs the application to listen on port <code>7979</code>.</p>
+</div>
+</li>
+<li>
+<p>As before, right click on <code>io.spring.cloud.samples.fortuneteller.eureka.Application</code> and choose <strong>Run As &#8594; Spring Boot App</strong>.</p>
+</li>
+<li>
+<p>Visit <a href="http://localhost:7979" class="bare">http://localhost:7979</a>.
+You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/hystrix_dashboard_1.png" alt="hystrix dashboard 1" width="50%">
+</div>
+</div>
+</li>
+<li>
+<p>Paste <a href="http://localhost:8081/hystrix.stream" class="bare">http://localhost:8081/hystrix.stream</a> into the text field and click <strong>Monitor Stream</strong>.
+You should see output similar to the following:</p>
+<div class="imageblock">
+<div class="content">
+<img src="Common/images/hystrix_dashboard_2.png" alt="hystrix dashboard 2" width="50%">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 15:52:11 PDT
+Last updated 2015-05-21 21:52:20 PDT
 </div>
 </div>
 </body>
