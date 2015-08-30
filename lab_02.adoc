@@ -63,10 +63,10 @@ NOTE: The path `../../../.git` refers to the `.git` directory at the root of the
 ----
 info:
   build:
-    artifact: @project.artifactId@
-    name: @project.name@
-    description: @project.description@
-    version: @project.version@
+    artifact: "@project.artifactId@"
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
 ----
 +
 These will add the project's Maven coordinates to the `/info` endpoint. The Spring Boot Maven plugin will cause them to automatically be replaced in the assembled JAR.
