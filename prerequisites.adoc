@@ -1,0 +1,9 @@
+To be successful, you'll need certain prerequisite tools installed on the laptops that you'll be bringing to the session:
+
+- http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[Java 8 JDK] (not just JRE)
+- https://maven.apache.org/download.cgi[Apache Maven] (latest)
+- http://curl.haxx.se/download.html[cURL] (latest)
+- https://git-scm.com/downloads[Git] (latest)
+- https://www.rabbitmq.com/download.html[RabbitMQ] (latest)
+- https://github.com/cloudfoundry/cli/releases[Cloud Foundry Client] (latest)
+- https://spring.io/tools[Spring Tool Suite] (latest)
