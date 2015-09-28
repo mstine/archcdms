@@ -963,10 +963,7 @@ The <code>randomFortune</code> method provides a <code>PageRequest</code> to lim
 <div class="content">
 <pre>spring:
   application:
-    name: fortunes
-  cloud:
-    config:
-      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}</pre>
+    name: fortunes</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -995,7 +992,7 @@ spring:
 spring:
   profiles: cloud
   jpa:
-    database: POSTGRESQL</pre>
+    database: MYSQL</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1143,10 +1140,7 @@ public class UiController {
 <div class="content">
 <pre>spring:
   application:
-    name: ui
-  cloud:
-    config:
-      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}</pre>
+    name: ui</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1262,7 +1256,7 @@ You should see output similar to the following:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-22 14:01:55 PDT
+Last updated 2015-09-27 22:30:18 EDT
 </div>
 </div>
 </body>

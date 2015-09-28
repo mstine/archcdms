@@ -8,6 +8,10 @@ Matt Stine (https://twitter.com/mstine[@mstine]) +
 Principal Engineer / Senior Project Manager - Pivotal +
 mstine@pivotal.io
 
+== Prerequsities
+
+include::prerequisites.adoc[]
+
 == Schedule
 
 _This is a *loose* schedule for the day to give us some structure.
@@ -27,10 +31,6 @@ Our only fixed break is lunch._
 
 . Create a Pivotal Web Services account https://console.run.pivotal.io/register[here].
 Pivotal Web Services is a hosted instance of http://cloudfoundry.org[Cloud Foundry] that is operated by http://pivotal.io[Pivotal].
-. Run the script found at `$COURSE_HOME/labs/setup_pact.sh`.
-This script will perform some setup that was left out of the initial machine image.
-
-NOTE: For this workshop, where you see `$COURSE_HOME`, the directory is `/home/workshop/workspace/archcdms`.
 
 == Course Materials
 

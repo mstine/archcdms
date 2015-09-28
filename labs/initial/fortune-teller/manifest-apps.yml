@@ -1,5 +1,5 @@
 ---
-memory: 384M
+memory: 512M
 instances: 1
 applications:
 - name: fortune-service
@@ -15,3 +15,4 @@ applications:
   services:
   - config-service
   - service-registry
+  - circuit-breaker

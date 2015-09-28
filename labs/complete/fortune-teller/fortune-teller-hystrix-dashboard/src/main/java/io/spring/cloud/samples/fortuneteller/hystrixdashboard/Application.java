@@ -7,16 +7,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
-@EnableHystrixDashboard
 @Controller
+@EnableHystrixDashboard
 public class Application {
-
-    @RequestMapping("/")
-    public String home() {
-        return "forward:/hystrix";
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+    
+    @RequestMapping("/")
+    public String home() {
+        return "forward:/hystrix";
     }
 }

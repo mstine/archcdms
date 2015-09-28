@@ -17,34 +17,27 @@ $ mvn package
 +
 Maven will automatically download all of _Fortune Teller_'s dependencies. This may take a few moments.
 
-
-. Push the Spring Cloud services:
-+
-----
-$ cf push -f manifest-services.yml
-----
-+
-This will push the Spring Cloud Config Server, a Eureka server, and a Hystrix Dashboard, all with random routes.
-
-. Edit `scripts/create_services.sh` to add the random routes that were generated for you:
-+
-----
-cf cups config-service -p '{"uri":"http://config-server-fluxional-suttee.cfapps.io"}'
-cf cups service-registry -p '{"uri":"http://eureka-unprevalent-toper.cfapps.io"}'
-cf cs elephantsql turtle fortunes-db
-----
-
 . Run `scripts/create-services.sh` to create the services that you need:
 +
 ----
 $ scripts/create_services.sh
-Creating user provided service config-service in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance config-service in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK
-Creating user provided service service-registry in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance service-registry in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK
-Creating service fortunes-db in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance circuit-breaker in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+OK
+Creating service instance fortune-db in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK
 ----
+
+. In your PWS Space Dashboard, click *Manage* for your Config Server instance:
++
+image:Common/images/space_dashboard.png[]
+
+. In the resulting Config Server Dashboard, ensure that *Git* is selected, paste `https://github.com/mstine/config-repo.git` into the *Git URI* field, and click *Submit*:
++
+image:Common/images/config_server_dashboard.png[]
 
 . Push the microservices:
 +
@@ -58,14 +51,13 @@ This will push the fortunes service and the ui application.
 +
 image:Common/images/fortunes_1.png[]
 
-. Now, in another browser tab, access the Hystrix Dashboard at the route that was created for you.
-Enter the route for the UI application and click the ``Monitor Stream.''
+. In your PWS Space Dashboard, click *Manage* for your Circuit Breaker Dashboard instance:
 +
-image:Common/images/fortunes_2.png[]
+image:Common/images/space_dashboard_2.png[]
 
 . Access the fortunes-ui and show that the circuit breaker is registering successful requests.
 +
-image:Common/images/fortunes_3.png[]
+image:Common/images/pcf_circuit_breaker_1.png[]
 
 . Stop the fortunes application:
 +
@@ -79,7 +71,7 @@ image:Common/images/fortunes_4.png[]
 
 . Access the fortunes-ui and show that the circuit breaker is registering short-circuited requests.
 +
-image:Common/images/fortunes_5.png[]
+image:Common/images/pcf_circuit_breaker_2.png[]
 
 . Start the fortunes application:
 +

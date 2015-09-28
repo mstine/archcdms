@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Lab 11 - Push Microservices to Cloud Foundry</title>
+<title>Untitled</title>
 <style>
 /*! normalize.css v2.1.2 | MIT License | git.io/normalize */
 /* ========================================================================== HTML5 display definitions ========================================================================== */
@@ -682,131 +682,40 @@ b.conum * { color: inherit !important; }
 </head>
 <body class="article">
 <div id="header">
-<h1>Lab 11 - Push Microservices to Cloud Foundry</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_build_and_push">Build and Push!</h2>
-<div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Return to the <em>Fortune Teller</em> application directory that you finished in <a href="lab_03.html">Lab 3</a>:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ cd $COURSE_HOME/labs/initial/fortune-teller</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Using Maven, build and package the application:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ mvn package</pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Maven will automatically download all of <em>Fortune Teller</em>'s dependencies. This may take a few moments.</p>
+<p>To be successful, you&#8217;ll need certain prerequisite tools installed on the laptops that you&#8217;ll be bringing to the session:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java 8 JDK</a> (not just JRE)</p>
 </li>
 <li>
-<p>Run <code>scripts/create-services.sh</code> to create the services that you need:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ scripts/create_services.sh
-Creating service instance config-service in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
-OK
-Creating service instance service-registry in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
-OK
-Creating service instance circuit-breaker in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
-OK
-Creating service instance fortune-db in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
-OK</pre>
-</div>
-</div>
+<p><a href="https://maven.apache.org/download.cgi">Apache Maven</a> (latest)</p>
 </li>
 <li>
-<p>In your PWS Space Dashboard, click <strong>Manage</strong> for your Config Server instance:</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/space_dashboard.png" alt="space_dashboard"></span></p>
-</div>
+<p><a href="http://curl.haxx.se/download.html">cURL</a> (latest)</p>
 </li>
 <li>
-<p>In the resulting Config Server Dashboard, ensure that <strong>Git</strong> is selected, paste <code>https://github.com/mstine/config-repo.git</code> into the <strong>Git URI</strong> field, and click <strong>Submit</strong>:</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/config_server_dashboard.png" alt="config_server_dashboard"></span></p>
-</div>
+<p><a href="https://git-scm.com/downloads">Git</a> (latest)</p>
 </li>
 <li>
-<p>Push the microservices:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ cf push -f manifest-apps.yml</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will push the fortunes service and the ui application.</p>
-</div>
+<p><a href="https://www.rabbitmq.com/download.html">RabbitMQ</a> (latest)</p>
 </li>
 <li>
-<p>In a browser, access the fortunes-ui application at the route that was created for you:</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/fortunes_1.png" alt="fortunes_1"></span></p>
-</div>
+<p><a href="https://github.com/cloudfoundry/cli/releases">Cloud Foundry Client</a> (latest)</p>
 </li>
 <li>
-<p>In your PWS Space Dashboard, click <strong>Manage</strong> for your Circuit Breaker Dashboard instance:</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/space_dashboard_2.png" alt="space_dashboard_2"></span></p>
-</div>
+<p><a href="https://spring.io/tools">Spring Tool Suite</a> (latest)</p>
 </li>
-<li>
-<p>Access the fortunes-ui and show that the circuit breaker is registering successful requests.</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/pcf_circuit_breaker_1.png" alt="pcf_circuit_breaker_1"></span></p>
-</div>
-</li>
-<li>
-<p>Stop the fortunes application:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ cf stop fortunes</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the fortunes-ui and see that the &#8220;fallback fortune&#8221; is being returned.</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/fortunes_4.png" alt="fortunes_4"></span></p>
-</div>
-</li>
-<li>
-<p>Access the fortunes-ui and show that the circuit breaker is registering short-circuited requests.</p>
-<div class="paragraph">
-<p><span class="image"><img src="Common/images/pcf_circuit_breaker_2.png" alt="pcf_circuit_breaker_2"></span></p>
-</div>
-</li>
-<li>
-<p>Start the fortunes application:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ cf start fortunes</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Continue to access the fortunes-ui and watch the dashboard.
-After the fortunes service has re-registered with Eureka and the fortunes-ui load balancer caches are refreshed, you will see the circuit breaker recover.
-You should then start getting random fortunes again!</p>
-</li>
-</ol>
-</div>
-</div>
+</ul>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-27 23:02:53 EDT
+Last updated 2015-09-21 16:24:19 EDT
 </div>
 </div>
 </body>
