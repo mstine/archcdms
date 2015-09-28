@@ -13,9 +13,9 @@ Description:: `Hello Spring Boot`
 Package Name:: `io.pivotal.spring.hello`
 Type:: Maven Project
 Packaging:: Jar
-Java Version:: 1.7
+Java Version:: 1.8
 Language:: Java
-Spring Boot Version 1.2.3
+Spring Boot Version 1.2.6
 
 . In the *Project dependencies* section, check the following:
 +

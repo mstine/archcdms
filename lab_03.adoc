@@ -192,9 +192,6 @@ The `randomFortune` method provides a `PageRequest` to limit the returned result
 spring:
   application:
     name: fortunes
-  cloud:
-    config:
-      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}
 ----
 +
 This configuration specifies the name of the application, which will be used to register the service in Eureka.
@@ -220,7 +217,7 @@ spring:
 spring:
   profiles: cloud
   jpa:
-    database: POSTGRESQL
+    database: MYSQL
 ----
 +
 This configuration specifies the model to DDL setting to be used by Hibernate, as well as the Hibernate dialects to be used for local development and cloud.
@@ -337,10 +334,7 @@ This class provides the REST endpoint that will be consumed by our AngularJS UI.
 ----
 spring:
   application:
-    name: ui
-  cloud:
-    config:
-      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}
+    name: ui  
 ----
 +
 This configuration specifies the name of the application, which will be used to register the service in Eureka.

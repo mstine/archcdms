@@ -710,38 +710,31 @@ b.conum * { color: inherit !important; }
 </div>
 </li>
 <li>
-<p>Push the Spring Cloud services:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ cf push -f manifest-services.yml</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will push the Spring Cloud Config Server, a Eureka server, and a Hystrix Dashboard, all with random routes.</p>
-</div>
-</li>
-<li>
-<p>Edit <code>scripts/create_services.sh</code> to add the random routes that were generated for you:</p>
-<div class="listingblock">
-<div class="content">
-<pre>cf cups config-service -p '{"uri":"http://config-server-fluxional-suttee.cfapps.io"}'
-cf cups service-registry -p '{"uri":"http://eureka-unprevalent-toper.cfapps.io"}'
-cf cs elephantsql turtle fortunes-db</pre>
-</div>
-</div>
-</li>
-<li>
 <p>Run <code>scripts/create-services.sh</code> to create the services that you need:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ scripts/create_services.sh
-Creating user provided service config-service in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance config-service in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK
-Creating user provided service service-registry in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance service-registry in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK
-Creating service fortunes-db in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+Creating service instance circuit-breaker in org platform-eng / space nfjs-workshop as mstine@pivotal.io...
+OK
+Creating service instance fortune-db in org org platform-eng / space nfjs-workshop as mstine@pivotal.io...
 OK</pre>
 </div>
+</div>
+</li>
+<li>
+<p>In your PWS Space Dashboard, click <strong>Manage</strong> for your Config Server instance:</p>
+<div class="paragraph">
+<p><span class="image"><img src="Common/images/space_dashboard.png" alt="space_dashboard"></span></p>
+</div>
+</li>
+<li>
+<p>In the resulting Config Server Dashboard, ensure that <strong>Git</strong> is selected, paste <code>https://github.com/mstine/config-repo.git</code> into the <strong>Git URI</strong> field, and click <strong>Submit</strong>:</p>
+<div class="paragraph">
+<p><span class="image"><img src="Common/images/config_server_dashboard.png" alt="config_server_dashboard"></span></p>
 </div>
 </li>
 <li>
@@ -762,16 +755,15 @@ OK</pre>
 </div>
 </li>
 <li>
-<p>Now, in another browser tab, access the Hystrix Dashboard at the route that was created for you.
-Enter the route for the UI application and click the &#8220;Monitor Stream.&#8221;</p>
+<p>In your PWS Space Dashboard, click <strong>Manage</strong> for your Circuit Breaker Dashboard instance:</p>
 <div class="paragraph">
-<p><span class="image"><img src="Common/images/fortunes_2.png" alt="fortunes_2"></span></p>
+<p><span class="image"><img src="Common/images/space_dashboard_2.png" alt="space_dashboard_2"></span></p>
 </div>
 </li>
 <li>
 <p>Access the fortunes-ui and show that the circuit breaker is registering successful requests.</p>
 <div class="paragraph">
-<p><span class="image"><img src="Common/images/fortunes_3.png" alt="fortunes_3"></span></p>
+<p><span class="image"><img src="Common/images/pcf_circuit_breaker_1.png" alt="pcf_circuit_breaker_1"></span></p>
 </div>
 </li>
 <li>
@@ -791,7 +783,7 @@ Enter the route for the UI application and click the &#8220;Monitor Stream.&#822
 <li>
 <p>Access the fortunes-ui and show that the circuit breaker is registering short-circuited requests.</p>
 <div class="paragraph">
-<p><span class="image"><img src="Common/images/fortunes_5.png" alt="fortunes_5"></span></p>
+<p><span class="image"><img src="Common/images/pcf_circuit_breaker_2.png" alt="pcf_circuit_breaker_2"></span></p>
 </div>
 </li>
 <li>
@@ -814,7 +806,7 @@ You should then start getting random fortunes again!</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 23:58:03 CDT
+Last updated 2015-09-27 23:02:53 EDT
 </div>
 </div>
 </body>
