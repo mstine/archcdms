@@ -1,51 +1,58 @@
 :compat-mode:
 = Lab 6 - Publishing a Contract to Pact Broker
 
-In this lab we'll publish the ``pact'' we generated in link:lab_04.html[Lab 4] to a running instance of Pact Broker.
+In this lab we'll publish the ``pact'' we generated in link:lab_04.html[Lab 4] to a running instance of Pact Broker on Pivotal Web Services.
 
-NOTE: These instructions assume you've already executed the `setup_pact.sh` script mentioned in the link:student_guide.html[Student Guide] under *First Things First*.
+== Target
+
+. If you haven't already, download the latest release of the Cloud Foundry CLI from https://github.com/cloudfoundry/cli/releases for your operating system and install it.
+
+. Set the API target for the CLI:
++
+----
+$ cf api api.run.pivotal.io
+----
+
+. Login to Pivotal Web Services:
++
+----
+$ cf login
+----
++
+Follow the prompts.
+
+== Push Pact Broker
 
 . Change to the Pact Broker example directory:
 +
 ----
-$ cd $COURSE_HOME/labs/pact_broker/example
+$ cd $COURSE_HOME/labs/pact_broker
 ----
 
-. In case you have a stale terminal session, make sure RVM is initialized:
+. Push Pact Broker to PWS:
 +
 ----
-$ source /home/workshop/.rvm/scripts/rvm
+$ cf push pact-broker --random-route
 ----
 
-. Start Pact Broker:
+. Visit Pact Broker at the random route assigned by Cloud Foundry (e.g. http://pact-broker-distortive-broadside.cfapps.io).
 +
-----
-$ bundle exec rackup
-----
-+
-You should see output similar to the following:
-+
-----
-Thin web server (v1.6.3 codename Protein Powder)
-Maximum connections set to 1024
-Listening on localhost:9292, CTRL+C to stop
-----
-
-. Visit http://localhost:9292.
 You should see output similar to the following:
 +
 image::Common/images/pact_broker_1.png[]
 
-. In another terminal window, change to the following directory:
+== Publish the Pact
+
+. Change to the following directory:
 +
 ----
 $ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-ui/target/pacts
 ----
 
-. Publish the pact using cURL:
+. Publish the pact using cURL (again, use the random route provided to you by Cloud Foundry):
 +
 ----
-$ curl -i -X PUT http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0 -H "Content-Type: application/json" -d@FortuneUi-FortuneService.json
+$ curl -i -X PUT http://pact-broker-distortive-broadside.cfapps.io/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0 -H "Content-Type: application/json" -d@FortuneUi-FortuneService.json
 ----
 +
 You should see output similar to the following:

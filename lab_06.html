@@ -685,68 +685,87 @@ b.conum * { color: inherit !important; }
 <h1>Lab 6 - Publishing a Contract to Pact Broker</h1>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>In this lab we&#8217;ll publish the &#8220;pact&#8221; we generated in <a href="lab_04.html">Lab 4</a> to a running instance of Pact Broker.</p>
+<p>In this lab we&#8217;ll publish the &#8220;pact&#8221; we generated in <a href="lab_04.html">Lab 4</a> to a running instance of Pact Broker on Pivotal Web Services.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-These instructions assume you&#8217;ve already executed the <code>setup_pact.sh</code> script mentioned in the <a href="student_guide.html">Student Guide</a> under <strong>First Things First</strong>.
-</td>
-</tr>
-</table>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_target">Target</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you haven&#8217;t already, download the latest release of the Cloud Foundry CLI from <a href="https://github.com/cloudfoundry/cli/releases" class="bare">https://github.com/cloudfoundry/cli/releases</a> for your operating system and install it.</p>
+</li>
+<li>
+<p>Set the API target for the CLI:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf api api.run.pivotal.io</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Login to Pivotal Web Services:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cf login</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Follow the prompts.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_push_pact_broker">Push Pact Broker</h2>
+<div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Change to the Pact Broker example directory:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ cd $COURSE_HOME/labs/pact_broker/example</pre>
+<pre>$ cd $COURSE_HOME/labs/pact_broker</pre>
 </div>
 </div>
 </li>
 <li>
-<p>In case you have a stale terminal session, make sure RVM is initialized:</p>
+<p>Push Pact Broker to PWS:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ source /home/workshop/.rvm/scripts/rvm</pre>
+<pre>$ cf push pact-broker --random-route</pre>
 </div>
 </div>
 </li>
 <li>
-<p>Start Pact Broker:</p>
-<div class="listingblock">
-<div class="content">
-<pre>$ bundle exec rackup</pre>
-</div>
-</div>
+<p>Visit Pact Broker at the random route assigned by Cloud Foundry (e.g. <a href="http://pact-broker-distortive-broadside.cfapps.io" class="bare">http://pact-broker-distortive-broadside.cfapps.io</a>).</p>
 <div class="paragraph">
 <p>You should see output similar to the following:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>Thin web server (v1.6.3 codename Protein Powder)
-Maximum connections set to 1024
-Listening on localhost:9292, CTRL+C to stop</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Visit <a href="http://localhost:9292" class="bare">http://localhost:9292</a>.
-You should see output similar to the following:</p>
 <div class="imageblock">
 <div class="content">
 <img src="Common/images/pact_broker_1.png" alt="pact broker 1">
 </div>
 </div>
 </li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_publish_the_pact">Publish the Pact</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>In another terminal window, change to the following directory:</p>
+<p>Change to the following directory:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ cd $COURSE_HOME/labs/initial/fortune-teller/fortune-teller-ui/target/pacts</pre>
@@ -754,10 +773,10 @@ You should see output similar to the following:</p>
 </div>
 </li>
 <li>
-<p>Publish the pact using cURL:</p>
+<p>Publish the pact using cURL (again, use the random route provided to you by Cloud Foundry):</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ curl -i -X PUT http://localhost:9292/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0 -H "Content-Type: application/json" -d@FortuneUi-FortuneService.json</pre>
+<pre>$ curl -i -X PUT http://pact-broker-distortive-broadside.cfapps.io/pacts/provider/FortuneService/consumer/FortuneUi/version/1.0.0 -H "Content-Type: application/json" -d@FortuneUi-FortuneService.json</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -795,9 +814,11 @@ You will see a nicely formatted, human readable version of your pact:</p>
 </ol>
 </div>
 </div>
+</div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-22 02:50:16 EDT
+Last updated 2015-09-28 00:03:00 EDT
 </div>
 </div>
 </body>
