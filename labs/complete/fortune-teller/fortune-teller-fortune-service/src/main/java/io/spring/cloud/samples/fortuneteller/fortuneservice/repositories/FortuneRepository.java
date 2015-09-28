@@ -1,4 +1,4 @@
-package io.spring.cloud.samples.fortuneteller.fortuneservice.respositories;
+package io.spring.cloud.samples.fortuneteller.fortuneservice.repositories;
 
 import io.spring.cloud.samples.fortuneteller.fortuneservice.domain.Fortune;
 import org.springframework.data.domain.Pageable;

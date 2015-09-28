@@ -1,7 +1,7 @@
 package io.spring.cloud.samples.fortuneteller.fortuneservice.controllers;
 
 import io.spring.cloud.samples.fortuneteller.fortuneservice.domain.Fortune;
-import io.spring.cloud.samples.fortuneteller.fortuneservice.respositories.FortuneRepository;
+import io.spring.cloud.samples.fortuneteller.fortuneservice.repositories.FortuneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
