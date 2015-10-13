@@ -17,7 +17,7 @@ $ mvn package
 +
 Maven will automatically download all of _Fortune Teller_'s dependencies. This may take a few moments.
 
-. Run `scripts/create-services.sh` to create the services that you need:
+. Run `scripts/create_services.sh` to create the services that you need:
 +
 ----
 $ scripts/create_services.sh
